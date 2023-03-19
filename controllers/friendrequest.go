@@ -23,7 +23,7 @@ type FriendRequestController struct {
 	firbaseSerives       services.FirebaseService
 }
 
-func NewFirebaseController(logger infrastructure.Logger, firedrequestservice services.FriendRequestService, env infrastructure.Env, firebaseService services.FirebaseService) FriendRequestController {
+func NewFriendRequestController(logger infrastructure.Logger, firedrequestservice services.FriendRequestService, env infrastructure.Env, firebaseService services.FirebaseService) FriendRequestController {
 	return FriendRequestController{
 		logger:               logger,
 		friendrequestService: firedrequestservice,

@@ -17,4 +17,5 @@ var Module = fx.Options(
 	fx.Provide(NewQuizHistoryServices),
 	fx.Provide(NewClientService),
 	fx.Provide(NewJwtService),
+	fx.Provide(NewFriendRequestService),
 )

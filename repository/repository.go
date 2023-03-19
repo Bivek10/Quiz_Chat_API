@@ -11,4 +11,5 @@ var Module = fx.Options(
 	fx.Provide(NewChoiceRepository),
 	fx.Provide(NewQuizHistoryRepository),
 	fx.Provide(NewClientRepository),
+	fx.Provide(NewFriendRequestRepository),
 )

@@ -5,6 +5,7 @@ import (
 
 	"github.com/bivek/fmt_backend/models"
 	"github.com/bivek/fmt_backend/repository"
+	"github.com/bivek/fmt_backend/utils"
 )
 
 type FriendRequestService struct {
@@ -29,4 +30,22 @@ func (f FriendRequestService) SendRequest(friendRequest models.FriendRequest) er
 	return err
 }
 
-func (f FriendRequestService) GetAcceptedFriend(pagination Utils.Pagination, clientID) 
+func (f FriendRequestService) GetAcceptedFriend(pagination utils.Pagination, clientID int) ([]models.Clients, int64, error) {
+	friendlist, count, err := f.repository.GetAcceptedFriend(pagination, clientID)
+	return friendlist, count, err
+}
+
+func (f FriendRequestService) GetPendingFriend(pagination utils.Pagination, clientID int) ([]models.Clients, int64, error) {
+	friendlist, count, err := f.repository.GetPendingFriend(pagination, clientID)
+	return friendlist, count, err
+}
+
+func (f FriendRequestService) CancleRequest(clientID int) error {
+	err := f.repository.CancleRequest(clientID)
+	return err
+}
+
+func (f FriendRequestService) GetUnFriend(pagination utils.Pagination, clientID int) ([]models.Clients, int64, error) {
+	unfriendlist, count, err := f.repository.GetUnFriend(pagination, clientID)
+	return unfriendlist, count, err
+}

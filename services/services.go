@@ -18,4 +18,5 @@ var Module = fx.Options(
 	fx.Provide(NewClientService),
 	fx.Provide(NewJwtService),
 	fx.Provide(NewFriendRequestService),
+	fx.Provide(NewConversationService),
 )

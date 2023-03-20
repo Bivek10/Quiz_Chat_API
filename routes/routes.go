@@ -13,6 +13,7 @@ var Module = fx.Options(
 	fx.Provide(NewHistoryRoutes),
 	fx.Provide(NewClientRoutes),
 	fx.Provide(NewFriendRequestRoutes),
+	fx.Provide(NewConversationRoutes),
 	//fx.Provide(NewPlantRoutes),
 )
 

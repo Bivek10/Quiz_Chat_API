@@ -35,6 +35,15 @@ func (fr FriendRequestRepository) SendRequest(friendRequest models.FriendRequest
 	return fr.db.DB.Create(&friendRequest).Error
 }
 
+//acceptrequest
+func (fr FriendRequestRepository) AcceptRequest(friendRequest models.FriendRequest) error {
+	return fr.db.DB.Model(&models.FriendRequest{}).
+		Where("sender = ?", friendRequest.Sender).
+		Updates(map[string]interface{}{
+			"status": friendRequest.Status,
+		}).Error
+}
+
 //get accepted friends list
 
 func (fr FriendRequestRepository) GetAcceptedFriend(pagination utils.Pagination, clientID int) ([]models.Clients, int64, error) {
@@ -91,8 +100,8 @@ func (fr FriendRequestRepository) CancleRequest(clientID int) error {
 
 //get All Un-Friend list
 
-func (fr FriendRequestRepository) GetUnFriend(pagination utils.Pagination, clientID int) ([] models.Clients, int64, error){
-	var unfriendlist [] models.Clients
+func (fr FriendRequestRepository) GetUnFriend(pagination utils.Pagination, clientID int) ([]models.Clients, int64, error) {
+	var unfriendlist []models.Clients
 
 	var count int64
 
@@ -107,5 +116,4 @@ func (fr FriendRequestRepository) GetUnFriend(pagination utils.Pagination, clien
 	err := queryBuilder.Find(&unfriendlist).Error
 
 	return unfriendlist, count, err
-} 
-
+}

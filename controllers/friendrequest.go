@@ -55,6 +55,26 @@ func (fc FriendRequestController) SendRequest(c *gin.Context) {
 	responses.SuccessJSON(c, http.StatusOK, "Request Sent")
 }
 
+func (fc FriendRequestController) AcceptRequest(c *gin.Context) {
+	friendsModel := models.FriendRequest{}
+
+	if err := c.ShouldBindJSON(&friendsModel); err != nil {
+		fc.logger.Zap.Error("Error on Binding", err)
+		responses.HandleError(c, err)
+		return
+	}
+
+	if err := fc.friendrequestService.AcceptRequest(friendsModel); err != nil {
+		fc.logger.Zap.Error("Error on sending request", err)
+		err := errors.InternalError.Wrap(err, "Failed to accept request")
+
+		responses.HandleError(c, err)
+		return
+	}
+
+	responses.SuccessJSON(c, http.StatusOK, "Request Accepted")
+}
+
 func (fc FriendRequestController) CancleRequest(c *gin.Context) {
 	id := c.Param("id")
 

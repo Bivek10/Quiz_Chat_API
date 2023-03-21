@@ -30,6 +30,11 @@ func (f FriendRequestService) SendRequest(friendRequest models.FriendRequest) er
 	return err
 }
 
+func (f FriendRequestService) AcceptRequest(friendRequest models.FriendRequest) error {
+	err := f.repository.AcceptRequest(friendRequest)
+	return err
+}
+
 func (f FriendRequestService) GetAcceptedFriend(pagination utils.Pagination, clientID int) ([]models.Clients, int64, error) {
 	friendlist, count, err := f.repository.GetAcceptedFriend(pagination, clientID)
 	return friendlist, count, err

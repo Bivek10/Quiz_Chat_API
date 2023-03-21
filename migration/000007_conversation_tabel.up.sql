@@ -1,6 +1,6 @@
 
 CREATE TABLE IF NOT EXISTS conversations (
-    `id`    INT NOT NULL,
+    `id`    INT NOT NULL AUTO_INCREMENT,
     `sender`  INT NOT NULL,
     `receiver` INT NOT NULL,
     `message` TEXT NOT NULL,

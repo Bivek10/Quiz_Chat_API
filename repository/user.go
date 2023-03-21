@@ -3,11 +3,11 @@ package repository
 import (
 	"fmt"
 
+	"gorm.io/gorm"
+
 	"github.com/bivek/fmt_backend/infrastructure"
 	"github.com/bivek/fmt_backend/models"
 	"github.com/bivek/fmt_backend/utils"
-
-	"gorm.io/gorm"
 )
 
 // UserRepository -> database structure

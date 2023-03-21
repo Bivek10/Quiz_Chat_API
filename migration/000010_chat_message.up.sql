@@ -11,3 +11,5 @@ CREATE TABLE
         CONSTRAINT message_room_id_fk FOREIGN KEY (room_id) REFERENCES chatroom (id),
         CONSTRAINT message_user_id_fk FOREIGN KEY (user_id) REFERENCES clients (id)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+    
+

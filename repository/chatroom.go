@@ -26,26 +26,22 @@ func (c ChatRoomRepository) Create(ChatRoom models.ChatRoom) (models.ChatRoom, e
 }
 
 // GetAllChatRoom -> Get All ChatRoom
-func (c ChatRoomRepository) GetAllChatRoom(pagination utils.Pagination) ([]models.ChatRoom, int64, error) {
+func (c ChatRoomRepository) GetAllChatRoom(pagination utils.CursorPagination) ([]models.ChatRoom, int64, error) {
 	var ChatRoom []models.ChatRoom
-	var totalRows int64 = 0
-	queryBuider := c.db.DB.Model(&models.ChatRoom{}).Offset(pagination.Offset).Order(pagination.Sort)
 
-	if !pagination.All {
-		queryBuider = queryBuider.Limit(pagination.PageSize)
-	}
-
-	if pagination.Keyword != "" {
-		searchQuery := "%" + pagination.Keyword + "%"
-		queryBuider.Where(c.db.DB.Where("`chatroom`.`title` LIKE ?", searchQuery))
-	}
+	queryBuider := c.db.DB.Model(&models.ChatRoom{})
 
 	err := queryBuider.
 		Find(&ChatRoom).
-		Offset(-1).
-		Limit(-1).
-		Count(&totalRows).Error
-	return ChatRoom, totalRows, err
+		Where("id > ?", pagination.Cursor).
+		Limit(pagination.Limit).
+		Error
+
+	var nextCursor int64
+	if err != nil {
+		nextCursor = ChatRoom[len(ChatRoom)-1].ID
+	}
+	return ChatRoom, nextCursor, err
 }
 
 // GetOneChatRoom -> Get One ChatRoom By Id

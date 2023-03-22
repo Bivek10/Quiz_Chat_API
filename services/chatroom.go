@@ -24,7 +24,7 @@ func (c ChatRoomService) CreateChatRoom(ChatRoom models.ChatRoom) (models.ChatRo
 }
 
 // GetAllChatRoom -> call to create the ChatRoom
-func (c ChatRoomService) GetAllChatRoom(pagination utils.Pagination) ([]models.ChatRoom, int64, error) {
+func (c ChatRoomService) GetAllChatRoom(pagination utils.CursorPagination) ([]models.ChatRoom, int64, error) {
 	return c.repository.GetAllChatRoom(pagination)
 }
 

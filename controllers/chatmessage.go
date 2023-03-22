@@ -69,7 +69,7 @@ func (cc ChatMessageController) GetAllChatMessage(c *gin.Context) {
 		return
 	}
 	// pagination.Sort = "created_at desc"
-	ChatMessage, count, err := cc.ChatMessageService.GetAllChatMessage(pagination, int(roomID))
+	ChatMessage, cursor, err := cc.ChatMessageService.GetAllChatMessage(pagination, int(roomID))
 
 	if err != nil {
 		cc.logger.Zap.Error("Error finding ChatMessage records", err.Error())
@@ -77,7 +77,7 @@ func (cc ChatMessageController) GetAllChatMessage(c *gin.Context) {
 		responses.HandleError(c, err)
 		return
 	}
-	responses.JSONCount(c, http.StatusOK, ChatMessage, count)
+	responses.JSONCursor(c, http.StatusOK, ChatMessage, cursor)
 
 }
 

@@ -27,6 +27,10 @@ func JSONCount(c *gin.Context, statusCode int, data interface{}, count int64) {
 	c.JSON(statusCode, gin.H{"data": data, "count": count})
 }
 
+func JSONCursor(c *gin.Context, statusCode int, data interface{}, cursor int64) {
+	c.JSON(statusCode, gin.H{"data": data, "cursor": cursor})
+}
+
 type errResponse struct {
 	Message string      `json:"message"`
 	Error   string      `json:"error"`

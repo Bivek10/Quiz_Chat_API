@@ -54,7 +54,6 @@ func NewRoutes(
 		chatRoomRoutes,
 		chatMessageRoutes,
 		chatMemberRoutes,
-
 		//plantRoutes,
 	}
 }

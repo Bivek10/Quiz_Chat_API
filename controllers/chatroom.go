@@ -15,8 +15,8 @@ import (
 
 // ChatRoomController -> struct
 type ChatRoomController struct {
-	logger                 infrastructure.Logger
-	ChatRoomService  services.ChatRoomService
+	logger          infrastructure.Logger
+	ChatRoomService services.ChatRoomService
 }
 
 // NewChatRoomController -> constructor
@@ -25,8 +25,8 @@ func NewChatRoomController(
 	ChatRoomService services.ChatRoomService,
 ) ChatRoomController {
 	return ChatRoomController{
-		logger:                  logger,
-		ChatRoomService:  ChatRoomService,
+		logger:          logger,
+		ChatRoomService: ChatRoomService,
 	}
 }
 
@@ -54,9 +54,16 @@ func (cc ChatRoomController) CreateChatRoom(c *gin.Context) {
 // GetAllChatRoom -> Get All ChatRoom
 func (cc ChatRoomController) GetAllChatRoom(c *gin.Context) {
 
-	pagination := utils.BuildPagination(c)
-	pagination.Sort = "created_at desc"
-	ChatRoom, count, err := cc.ChatRoomService.GetAllChatRoom(pagination)
+	pagination, err := utils.BuildCursorPagination(c)
+
+	if err != nil {
+		cc.logger.Zap.Error("invalid cursor", err.Error())
+		err := errors.InternalError.Wrap(err, "invalid cursor")
+		responses.HandleError(c, err)
+		return
+	}
+	//pagination.Sort = "created_at desc"
+	ChatRoom, cursor, err := cc.ChatRoomService.GetAllChatRoom(pagination)
 
 	if err != nil {
 		cc.logger.Zap.Error("Error finding ChatRoom records", err.Error())
@@ -64,7 +71,7 @@ func (cc ChatRoomController) GetAllChatRoom(c *gin.Context) {
 		responses.HandleError(c, err)
 		return
 	}
-	responses.JSONCount(c, http.StatusOK, ChatRoom, count)
+	responses.JSONCursor(c, http.StatusOK, ChatRoom, cursor)
 
 }
 

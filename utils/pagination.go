@@ -6,17 +6,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//Pagination -> struct for Pagination
+// Pagination -> struct for Pagination
 type Pagination struct {
-	Page       int
-	Sort       string
-	PageSize   int
-	Offset     int
-	All        bool
-	Keyword    string
+	Page     int
+	Sort     string
+	PageSize int
+	Offset   int
+	All      bool
+	Keyword  string
 }
 
-//BuildPagination -> builds the pagination
+type CursorPagination struct {
+	Limit  int
+	Cursor int
+}
+
+// BuildPagination -> builds the pagination
 func BuildPagination(c *gin.Context) Pagination {
 	pageStr := c.Query("page")
 	pageSizeStr := c.Query("pageSize")
@@ -39,11 +44,32 @@ func BuildPagination(c *gin.Context) Pagination {
 	}
 
 	return Pagination{
-		Page:       page,
-		Sort:       sort,
-		PageSize:   pageSize,
-		Offset:     (page - 1) * pageSize,
-		All:        all,
-		Keyword:    keyword,
+		Page:     page,
+		Sort:     sort,
+		PageSize: pageSize,
+		Offset:   (page - 1) * pageSize,
+		All:      all,
+		Keyword:  keyword,
 	}
+}
+
+func BuildCursorPagination(c *gin.Context) CursorPagination {
+	limitStr := c.Query("limit")
+	cursorStr := c.Query("cursor")
+
+	limit, err := strconv.Atoi(limitStr)
+	if err != nil || limit <= 0 {
+		limit = 1
+	}
+
+	cursor, err := strconv.Atoi(cursorStr)
+	if err != nil || cursor <= 0 {
+		cursor = 1
+	}
+
+	return CursorPagination{
+		Limit:  limit,
+		Cursor: cursor,
+	}
+
 }

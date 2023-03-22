@@ -53,7 +53,7 @@ func BuildPagination(c *gin.Context) Pagination {
 	}
 }
 
-func BuildCursorPagination(c *gin.Context) CursorPagination {
+func BuildCursorPagination(c *gin.Context) (CursorPagination, error) {
 	limitStr := c.Query("limit")
 	cursorStr := c.Query("cursor")
 
@@ -64,12 +64,12 @@ func BuildCursorPagination(c *gin.Context) CursorPagination {
 
 	cursor, err := strconv.Atoi(cursorStr)
 	if err != nil || cursor <= 0 {
-		cursor = 1
+		return CursorPagination{}, err
 	}
 
 	return CursorPagination{
 		Limit:  limit,
 		Cursor: cursor,
-	}
+	}, nil
 
 }

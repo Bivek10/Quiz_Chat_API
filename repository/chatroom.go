@@ -37,7 +37,7 @@ func (c ChatRoomRepository) GetAllChatRoom(pagination utils.Pagination) ([]model
 
 	if pagination.Keyword != "" {
 		searchQuery := "%" + pagination.Keyword + "%"
-		queryBuider.Where(c.db.DB.Where("`ChatRoom`.`title` LIKE ?", searchQuery))
+		queryBuider.Where(c.db.DB.Where("`chatroom`.`title` LIKE ?", searchQuery))
 	}
 
 	err := queryBuider.

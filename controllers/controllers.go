@@ -15,4 +15,8 @@ var Module = fx.Options(
 	fx.Provide(NewClientController),
 	fx.Provide(NewFriendRequestController),
 	fx.Provide(NewConversationController),
+	fx.Provide(NewChatMessageController),
+	fx.Provide(NewChatMemberController),
+	fx.Provide(NewChatRoomController),
+
 )

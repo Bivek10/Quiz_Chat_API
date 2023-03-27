@@ -73,3 +73,6 @@ and,
 <!-- inotifywait -e modify -e move -e create -e delete -e attrib --exclude '(__debug_bin|\.git|\.idea|\.http|\.json)' -r . -->
 
 //export DOCKER_HOST="tcp://HOST:2375"
+
+
+//https://dev.to/jeroendk/multi-room-chat-application-with-websockets-in-go-and-vue-js-part-2-3la8

@@ -5,6 +5,7 @@ import "go.uber.org/fx"
 // Module exported for initializing application
 
 var Module = fx.Options(
+	fx.Provide(NewThreadController),
 	fx.Provide(NewUserController),
 	fx.Provide(NewUtilityController),
 	fx.Provide(NewPlantController),
@@ -18,5 +19,4 @@ var Module = fx.Options(
 	fx.Provide(NewChatMessageController),
 	fx.Provide(NewChatMemberController),
 	fx.Provide(NewChatRoomController),
-
 )

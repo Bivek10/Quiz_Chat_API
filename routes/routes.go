@@ -17,6 +17,7 @@ var Module = fx.Options(
 	fx.Provide(NewChatMemberRoutes),
 	fx.Provide(NewChatMessageRoutes),
 	fx.Provide(NewChatRoomRoutes),
+	//fx.Provide(NewThreadRoutes),
 	//fx.Provide(NewPlantRoutes),
 )
 

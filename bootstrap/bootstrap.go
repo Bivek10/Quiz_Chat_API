@@ -3,6 +3,8 @@ package bootstrap
 import (
 	"context"
 
+	"go.uber.org/fx"
+
 	"github.com/bivek/fmt_backend/cli"
 	"github.com/bivek/fmt_backend/controllers"
 	"github.com/bivek/fmt_backend/infrastructure"
@@ -11,9 +13,8 @@ import (
 	"github.com/bivek/fmt_backend/routes"
 	"github.com/bivek/fmt_backend/seeds"
 	"github.com/bivek/fmt_backend/services"
+	"github.com/bivek/fmt_backend/socket"
 	"github.com/bivek/fmt_backend/utils"
-
-	"go.uber.org/fx"
 )
 
 // Module exported for initializing application
@@ -24,6 +25,7 @@ var Module = fx.Options(
 	middlewares.Module,
 	repository.Module,
 	infrastructure.Module,
+	socket.Module,
 	cli.Module,
 	seeds.Module,
 	fx.Invoke(bootstrap),

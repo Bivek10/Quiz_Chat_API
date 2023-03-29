@@ -1,6 +1,8 @@
 package services
 
 import (
+	"gorm.io/gorm"
+
 	"github.com/bivek/fmt_backend/models"
 	"github.com/bivek/fmt_backend/repository"
 	"github.com/bivek/fmt_backend/utils"
@@ -18,8 +20,14 @@ func NewChatRoomService(repository repository.ChatRoomRepository) ChatRoomServic
 	}
 }
 
+func (c ChatRoomService) WithTrx(trxHandle *gorm.DB) ChatRoomService {
+	c.repository = c.repository.WithTrx(trxHandle)
+	return c
+}
+
 // CreateChatRoom -> call to create the ChatRoom
 func (c ChatRoomService) CreateChatRoom(ChatRoom models.ChatRoom) (models.ChatRoom, error) {
+	println("I am at chat room services")
 	return c.repository.Create(ChatRoom)
 }
 

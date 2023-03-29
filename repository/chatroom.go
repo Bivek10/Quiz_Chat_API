@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"gorm.io/gorm"
+
 	"github.com/bivek/fmt_backend/infrastructure"
 	"github.com/bivek/fmt_backend/models"
 	"github.com/bivek/fmt_backend/utils"
@@ -20,9 +22,24 @@ func NewChatRoomRepository(db infrastructure.Database, logger infrastructure.Log
 	}
 }
 
+func (c ChatRoomRepository) WithTrx(trxHandle *gorm.DB) ChatRoomRepository {
+	if trxHandle == nil {
+		c.logger.Zap.Error("Transction Database not found in gin context")
+		return c
+	}
+	c.db.DB = trxHandle
+	return c
+}
+
 // Create ChatRoom
 func (c ChatRoomRepository) Create(ChatRoom models.ChatRoom) (models.ChatRoom, error) {
-	return ChatRoom, c.db.DB.Create(&ChatRoom).Error
+	// print("Create chat room in repo", ChatRoom)
+	println("I am at chat room repo")
+	err := c.db.DB.Create(&ChatRoom).Error
+	println(err)
+	return ChatRoom, err
+	//return ChatRoom, c.db.DB.Create(&ChatRoom).Error
+
 }
 
 // GetAllChatRoom -> Get All ChatRoom

@@ -42,15 +42,14 @@ func bootstrap(
 	cliApp cli.Application,
 	migrations infrastructure.Migrations,
 	seeds seeds.Seeds,
+	chatServer *socket.WsServer,
 ) {
-
 	appStop := func(context.Context) error {
 		logger.Zap.Info("Stopping Application")
 		conn, _ := database.DB.DB()
 		conn.Close()
 		return nil
 	}
-
 	if utils.IsCli() {
 		lifecycle.Append(fx.Hook{
 			OnStart: func(context.Context) error {
@@ -61,7 +60,6 @@ func bootstrap(
 			},
 			OnStop: appStop,
 		})
-
 		return
 	}
 
@@ -71,7 +69,6 @@ func bootstrap(
 			logger.Zap.Info("------------------------")
 			logger.Zap.Info("------ Boilerplate 📺 ------")
 			logger.Zap.Info("------------------------")
-
 			logger.Zap.Info("Migrating DB schema...")
 			go func() {
 				migrations.Migrate()

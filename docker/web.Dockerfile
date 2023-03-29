@@ -29,6 +29,8 @@ RUN cp /tmp/go-migrate/migrate /usr/bin/migrate
 
 WORKDIR /clean_web
 
+ENV GOFLAGS -buildvcs=false
+
 RUN go mod download
 
 CMD sh /clean_web/docker/run.sh

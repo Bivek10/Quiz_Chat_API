@@ -46,7 +46,7 @@ func ServeWs(wsServer *WsServer, c *gin.Context) {
 	userid, errs := strconv.Atoi(id)
 
 	if errs != nil {
-		log.Println("Url Param 'Id' is invalid")
+		log.Println("Url Param 'Id' is invalid", errs)
 		return
 	}
 	client := *newClient(conn, wsServer, userid)
@@ -186,17 +186,16 @@ func (client *Client) handleSendMessage(message Message) {
 
 func (client *Client) handleJoinRoomMessage(message Message) {
 	roomID := message.RoomId
-	client.joinRoom(roomID)
+	client.joinRoom(roomID, message.RoomName)
 }
 
 //there should be another create room function
 
-func (client *Client) joinRoom(roomID int) {
+func (client *Client) joinRoom(roomID int, roomName string) {
 
 	room := client.wsServer.findRoomByID(roomID)
 	if room == nil {
-
-		room = client.wsServer.createRoom(roomID,)
+		room = client.wsServer.createRoom(roomID, roomName)
 	}
 	//check if client is in the room (database)before or not
 	//if not add the room to this user
@@ -212,7 +211,4 @@ func (client *Client) handleLeaveRoomMessage(message Message) {
 		delete(client.rooms, room)
 	}
 	room.Unregister <- client
-
 }
-
-

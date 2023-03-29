@@ -17,7 +17,7 @@ var Module = fx.Options(
 	fx.Provide(NewChatMemberRoutes),
 	fx.Provide(NewChatMessageRoutes),
 	fx.Provide(NewChatRoomRoutes),
-	//fx.Provide(NewThreadRoutes),
+	fx.Provide(NewThreadRoutes),
 	//fx.Provide(NewPlantRoutes),
 )
 
@@ -42,6 +42,7 @@ func NewRoutes(
 	chatRoomRoutes ChatRoomRoutes,
 	chatMessageRoutes ChatMessageRoutes,
 	chatMemberRoutes ChatMemberRoutes,
+	threadRoutes 	ThreadRoutes,
 
 ) Routes {
 	return Routes{
@@ -55,6 +56,7 @@ func NewRoutes(
 		chatRoomRoutes,
 		chatMessageRoutes,
 		chatMemberRoutes,
+		threadRoutes,
 		//plantRoutes,
 	}
 }

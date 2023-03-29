@@ -15,6 +15,7 @@ type Message struct {
 	Message string `json:"message"`
 	RoomId  int `json:"roomId"`
 	SenderId  int `json:"senderId"`
+	RoomName string `json:"roomName"`
 }
 
 func (message *Message) encode() []byte {

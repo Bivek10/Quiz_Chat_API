@@ -194,6 +194,7 @@ func (client *Client) handleJoinRoomMessage(message Message) {
 func (client *Client) joinRoom(roomID int, roomName string) {
 
 	room := client.wsServer.findRoomByID(roomID)
+	
 	if room == nil {
 		room = client.wsServer.createRoom(roomID, roomName)
 	}

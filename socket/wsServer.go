@@ -32,7 +32,6 @@ func NewWebsocketServer(chatRoomServices services.ChatRoomService, logger infras
 func (server *WsServer) Run() {
 	for {
 		select {
-
 		case client := <-server.Register:
 			server.registerClient(client)
 
@@ -59,16 +58,15 @@ func (server *WsServer) unregisterClient(client *Client) {
 
 // create room inside server
 // it should be changed to create by id method
-
 // create a room in database
 func (server *WsServer) createRoom(id int, roomName string) *Room {
 	roomModel := models.ChatRoom{Name: roomName}
-
 	chatroom, err := server.ChatRoomService.CreateChatRoom(roomModel)
 	if err != nil {
 		server.Logger.Zap.Error("failed to create chat room")
 		return nil
 	}
+	println("set room id",int(chatroom.ID))
 	room := NewRoom(int(chatroom.ID))
 	go room.RunRoom()
 	server.Rooms[room] = true
@@ -80,18 +78,18 @@ func (server *WsServer) createRoom(id int, roomName string) *Room {
 // To find room by id .To add clients there . leave clients and send message to the room clients.
 
 func (server *WsServer) findRoomByID(ID int) *Room {
-
 	var foundRoom *Room
-	
 	chatRoom, err := server.ChatRoomService.GetOneChatRoom(int64(ID))
-
 	if err != nil {
 		server.Logger.Zap.Error("Unable to get chat room")
 		return nil
 	}
-
+	println("room id:", chatRoom.ID)
+	println("length:", len(server.Rooms))
 	for room := range server.Rooms {
+		println("available room ID", room.ID)
 		if room.GetId() == int(chatRoom.ID) {
+			println("Server matched")
 			foundRoom = room
 			break
 		}

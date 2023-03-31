@@ -13,7 +13,7 @@ type Room struct {
 // NewRoom creates a new Room
 func NewRoom(id int) *Room {
 	return &Room{
-		ID:        id,	
+		ID:         id,
 		Clients:    make(map[*Client]bool),
 		Register:   make(chan *Client),
 		Unregister: make(chan *Client),
@@ -36,12 +36,13 @@ func (room *Room) RunRoom() {
 	}
 }
 func (room *Room) GetId() int {
+	println("room - room ID ", room.ID)
 	return room.ID
 }
 
 // register and notify others users
 func (room *Room) registerClientInRoom(client *Client) {
-	
+
 	room.Clients[client] = true
 }
 
@@ -63,4 +64,3 @@ func (room *Room) broadcastToClientsInRoom(message []byte, clientId int) {
 		}
 	}
 }
-

@@ -183,21 +183,25 @@ func (client *Client) handleSendMessage(message Message) {
 	room.Broadcast <- &message
 }
 
-
 func (client *Client) handleJoinRoomMessage(message Message) {
 	roomID := message.RoomId
-	client.joinRoom(roomID, message.RoomName)
+	client.joinRoom(roomID, message.RoomName, message.SenderId)
 }
 
 //there should be another create room function
 
-func (client *Client) joinRoom(roomID int, roomName string) {
-
+func (client *Client) joinRoom(roomID int, roomName string, senderID int) {
+	println("room ID", roomID)
 	room := client.wsServer.findRoomByID(roomID)
-	
 	if room == nil {
-		room = client.wsServer.createRoom(roomID, roomName)
+		room = client.wsServer.createRoom(roomID, roomName, senderID)
+	} else {
+		rooms := client.wsServer.findMemberInRoom(roomID, senderID)
+		if rooms == nil {
+			room = client.wsServer.addMemberInRoom(roomID, senderID)
+		}
 	}
+
 	//check if client is in the room (database)before or not
 	//if not add the room to this user
 	client.rooms[room] = true

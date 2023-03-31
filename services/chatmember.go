@@ -29,8 +29,8 @@ func (c ChatMemberService) GetAllChatMember(pagination utils.Pagination) ([]mode
 }
 
 // GetOneChatMember -> Get One ChatMember By Id
-func (c ChatMemberService) GetOneChatMember(ID int64) (models.ChatMember, error) {
-	return c.repository.GetOneChatMember(ID)
+func (c ChatMemberService) GetOneChatMember(userID int64, roomID int64) (models.ChatMember, error) {
+	return c.repository.GetOneChatMember(userID, roomID)
 }
 
 // UpdateOneChatMember -> Update One ChatMember By Id

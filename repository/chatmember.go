@@ -49,10 +49,10 @@ func (c ChatMemberRepository) GetAllChatMember(pagination utils.Pagination) ([]m
 }
 
 // GetOneChatMember -> Get One ChatMember By Id
-func (c ChatMemberRepository) GetOneChatMember(ID int64) (models.ChatMember, error) {
+func (c ChatMemberRepository) GetOneChatMember(userID int64, roomID int64) (models.ChatMember, error) {
 	ChatMember := models.ChatMember{}
 	return ChatMember, c.db.DB.
-		Where("id = ?", ID).First(&ChatMember).Error
+		Where("user_id = ?", userID).Where("room_id= ?", roomID).First(&ChatMember).Error
 }
 
 // UpdateOneChatMember -> Update One ChatMember By Id

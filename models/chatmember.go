@@ -9,4 +9,3 @@ type ChatMember struct {
 func (c ChatMember) TableName() string {
 	return "chatmember"
 }
-

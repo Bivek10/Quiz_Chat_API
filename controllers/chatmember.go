@@ -70,8 +70,9 @@ func (cc ChatMemberController) GetAllChatMember(c *gin.Context) {
 
 // GetOneChatMember -> Get One ChatMember
 func (cc ChatMemberController) GetOneChatMember(c *gin.Context) {
-	ID, _ := strconv.ParseInt(c.Param("id"), 10, 64)
-	ChatMember, err := cc.ChatMemberService.GetOneChatMember(ID)
+	userID, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	roomID, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	ChatMember, err := cc.ChatMemberService.GetOneChatMember(userID, roomID)
 
 	if err != nil {
 		cc.logger.Zap.Error("Error [GetOneChatMember] [db GetOneChatMember]: ", err.Error())

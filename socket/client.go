@@ -84,8 +84,10 @@ func (client *Client) readMessage() {
 			}
 			break
 		}
+		println("json handle mesesae", jsonMessage)
 		client.handleNewMessages(jsonMessage)
 	}
+
 }
 
 func (client *Client) writeMessage() {
@@ -179,7 +181,14 @@ func (client *Client) handleSendMessage(message Message) {
 		println("The room you are trying to send message doesnot present")
 		return
 	}
-	room.Broadcast <- &message
+	//save message to database and board cast to user.
+	
+	
+		room.Broadcast <- &message
+	
+	
+
+	//save message to database;
 }
 
 func (client *Client) handleJoinRoomMessage(message Message) {
@@ -194,11 +203,12 @@ func (client *Client) joinRoom(roomID int64, roomName string, senderID int) {
 	// db room finding and creation
 	dbRoom := client.wsServer.findRoomByID(roomID)
 	if dbRoom == nil {
-		dbRoom = client.wsServer.createRoom(roomName)
+		dbRoom = client.wsServer.createRoom(roomName, roomID)
 	}
 
 	// find if sender is in this room
 	chatMember := client.wsServer.findMemberInRoom(roomID, senderID)
+
 	if chatMember == nil {
 		chatMember = client.wsServer.addMemberInRoom(roomID, senderID)
 	}
@@ -210,9 +220,7 @@ func (client *Client) joinRoom(roomID int64, roomName string, senderID int) {
 		chatRoom = client.wsServer.Rooms[dbRoom.ID]
 		go room.RunRoom()
 	}
-
-	//check if client is in the room (database)before or not
-	//if not add the room to this user
+	//add client to room
 	client.rooms[chatRoom.ID] = chatRoom
 	chatRoom.Register <- client
 }

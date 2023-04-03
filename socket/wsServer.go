@@ -15,9 +15,10 @@ type WsServer struct {
 	ChatRoomService  services.ChatRoomService
 	ChatMembeService services.ChatMemberService
 	Logger           infrastructure.Logger
+	MessageService   services.ChatMessageService
 }
 
-func NewWebsocketServer(chatRoomServices services.ChatRoomService, chatmemeberService services.ChatMemberService, logger infrastructure.Logger) *WsServer {
+func NewWebsocketServer(chatRoomServices services.ChatRoomService, chatmemeberService services.ChatMemberService, logger infrastructure.Logger, messageService services.ChatMessageService) *WsServer {
 	chatServer := &WsServer{
 		Broadcast:        make(chan []byte),
 		Register:         make(chan *Client),
@@ -27,6 +28,7 @@ func NewWebsocketServer(chatRoomServices services.ChatRoomService, chatmemeberSe
 		ChatRoomService:  chatRoomServices,
 		Logger:           logger,
 		ChatMembeService: chatmemeberService,
+		MessageService:   messageService,
 	}
 	go chatServer.Run()
 	return chatServer
@@ -58,23 +60,13 @@ func (server *WsServer) unregisterClient(client *Client) {
 	}
 }
 
-// create room inside server
-// it should be changed to create by id method
-// create a room in database
-func (server *WsServer) createRoom(roomName string) *models.ChatRoom {
-	roomModel := models.ChatRoom{Name: roomName}
+func (server *WsServer) createRoom(roomName string, roomID int64) *models.ChatRoom {
+	roomModel := models.ChatRoom{Name: roomName, Base: models.Base{ID: roomID}}
 	chatroom, err := server.ChatRoomService.CreateChatRoom(roomModel)
 	if err != nil {
 		server.Logger.Zap.Error("failed to create chat room")
 		return nil
 	}
-
-	//chatMember := models.ChatMember{UserID: senderID, RoomID: chatroom.ID}
-	//chatmember, err := server.ChatMembeService.CreateChatMember(chatMember)
-	//if err != nil {
-	//	server.Logger.Zap.Error("failed to add member in  room")
-	//	return nil
-	//}
 	return &chatroom
 }
 
@@ -96,10 +88,6 @@ func (server *WsServer) findMemberInRoom(roomID int64, userID int) *models.ChatM
 	return &chatMember
 }
 
-// all the created room are saved in server . This features
-// find room by name we may not need this later inted use search by id
-// To find room by id .To add clients there . leave clients and send message to the room clients.
-
 func (server *WsServer) findRoomByID(ID int64) *models.ChatRoom {
 	chatRoom, err := server.ChatRoomService.GetOneChatRoom(int64(ID))
 
@@ -109,6 +97,17 @@ func (server *WsServer) findRoomByID(ID int64) *models.ChatRoom {
 	}
 
 	return &chatRoom
+}
+
+func (server *WsServer) saveMessage(messageModel models.ChatMessage) *models.ChatMessage {
+	
+	dbMessage, err := server.MessageService.CreateChatMessage(messageModel)
+	if err != nil {
+		server.Logger.Zap.Error("Failed to save data in database")
+		return nil
+	}
+	return &dbMessage
+
 }
 
 func (server *WsServer) findClientByID(ID int) *Client {

@@ -1,5 +1,7 @@
 package socket
 
+import "github.com/bivek/fmt_backend/models"
+
 const welcomeMessage = "%s joined the room"
 
 type Room struct {
@@ -30,7 +32,7 @@ func (room *Room) RunRoom() {
 		case client := <-room.Unregister:
 			room.unregisterClientInRoom(client)
 		case message := <-room.Broadcast:
-			room.broadcastToClientsInRoom(message.encode(), message.SenderId)
+			room.broadcastToClientsInRoom(message.encode(), message)
 		}
 	}
 }
@@ -53,13 +55,21 @@ func (room *Room) unregisterClientInRoom(client *Client) {
 	}
 }
 
-func (room *Room) broadcastToClientsInRoom(message []byte, clientId int) {
+func (room *Room) broadcastToClientsInRoom(message []byte, messages *Message) {
 	// save this message to room
 	// broadcast to all online users
 	// get all client from the database and if some clients are not online than send them messages as notification when they are online
 	for client := range room.Clients {
-		if client.ID != clientId {
-			client.Send <- message
+		print("client list", client.ID)
+		if client.ID != messages.SenderId {
+			messageModel := models.ChatMessage{Message: messages.Message, UserID: messages.SenderId, RoomID: int(messages.RoomId)}
+			dbMessage := client.wsServer.saveMessage(messageModel);
+			if dbMessage != nil {
+				client.wsServer.saveMessage(messageModel)
+				client.Send <- message
+				println("message detail", message)
+			}
+
 		}
 	}
 }

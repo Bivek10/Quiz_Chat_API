@@ -22,6 +22,7 @@ func NewChatMessageRepository(db infrastructure.Database, logger infrastructure.
 
 // Create ChatMessage
 func (c ChatMessageRepository) Create(ChatMessage models.ChatMessage) (models.ChatMessage, error) {
+	println("on message creation")
 	return ChatMessage, c.db.DB.Create(&ChatMessage).Error
 }
 

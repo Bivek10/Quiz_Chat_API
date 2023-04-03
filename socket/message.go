@@ -4,17 +4,17 @@ import (
 	"encoding/json"
 	"fmt"
 )
-//Action: What action is the message requestin
+
+// Action: What action is the message requestin
 const SendMessageAction = "send-message"
 const JoinRoomAction = "join-room"
 const LeaveRoomAction = "leave-room"
 
-
 type Message struct {
-	Action  string `json:"action"`
-	Message string `json:"message"`
-	RoomId  int `json:"roomId"`
-	SenderId  int `json:"senderId"`
+	Action   string `json:"action"`
+	Message  string `json:"message"`
+	RoomId   int64  `json:"roomId"`
+	SenderId int    `json:"senderId"`
 	RoomName string `json:"roomName"`
 }
 

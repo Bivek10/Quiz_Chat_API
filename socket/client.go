@@ -33,8 +33,7 @@ type Client struct {
 	wsServer *WsServer
 	Conn     *websocket.Conn
 	Send     chan []byte
-	rooms    map[*Room]bool //
-
+	rooms    map[int64]*Room //
 }
 
 func ServeWs(wsServer *WsServer, c *gin.Context) {
@@ -64,7 +63,7 @@ func newClient(conn *websocket.Conn, wsServer *WsServer, id int) *Client {
 	return &Client{
 		ID:       id,
 		Conn:     conn,
-		rooms:    make(map[*Room]bool),
+		rooms:    make(map[int64]*Room),
 		wsServer: wsServer,
 		Send:     make(chan []byte),
 	}
@@ -135,14 +134,14 @@ func (client *Client) GetId() int {
 // disconnect client from the websocket server and all the rooms he/she was present in
 func (client *Client) disconnect() {
 	client.wsServer.Unregister <- client
-	for room := range client.rooms {
+	for _, room := range client.rooms {
 		room.Unregister <- client
 	}
 }
 
-func (client *Client) findRoomByID(ID int) *Room {
+func (client *Client) findRoomByID(ID int64) *Room {
 	var Room *Room
-	for room := range client.rooms {
+	for _, room := range client.rooms {
 		if room.GetId() == ID {
 			Room = room
 			break
@@ -188,32 +187,44 @@ func (client *Client) handleJoinRoomMessage(message Message) {
 	client.joinRoom(roomID, message.RoomName, message.SenderId)
 }
 
-//there should be another create room function
+// there should be another create room function
+func (client *Client) joinRoom(roomID int64, roomName string, senderID int) {
+	var chatRoom *Room
 
-func (client *Client) joinRoom(roomID int, roomName string, senderID int) {
-	println("room ID", roomID)
-	room := client.wsServer.findRoomByID(roomID)
-	if room == nil {
-		room = client.wsServer.createRoom(roomID, roomName, senderID)
-	} else {
-		rooms := client.wsServer.findMemberInRoom(roomID, senderID)
-		if rooms == nil {
-			room = client.wsServer.addMemberInRoom(roomID, senderID)
-		}
+	// db room finding and creation
+	dbRoom := client.wsServer.findRoomByID(roomID)
+	if dbRoom == nil {
+		dbRoom = client.wsServer.createRoom(roomName)
+	}
+
+	// find if sender is in this room
+	chatMember := client.wsServer.findMemberInRoom(roomID, senderID)
+	if chatMember == nil {
+		chatMember = client.wsServer.addMemberInRoom(roomID, senderID)
+	}
+
+	chatRoom = client.wsServer.Rooms[dbRoom.ID]
+	if chatRoom == nil {
+		room := NewRoom(dbRoom.ID)
+		client.wsServer.Rooms[dbRoom.ID] = room
+		chatRoom = client.wsServer.Rooms[dbRoom.ID]
+		go room.RunRoom()
 	}
 
 	//check if client is in the room (database)before or not
 	//if not add the room to this user
-	client.rooms[room] = true
-	room.Register <- client
+	client.rooms[chatRoom.ID] = chatRoom
+	chatRoom.Register <- client
 }
 
 func (client *Client) handleLeaveRoomMessage(message Message) {
 	// delete  this room from client in  the database
 	roomId := message.RoomId
-	room := client.wsServer.findRoomByID(roomId)
-	if _, ok := client.rooms[room]; ok {
-		delete(client.rooms, room)
+	dbRoom := client.wsServer.findRoomByID(roomId)
+	if dbRoom != nil {
+		if room, ok := client.rooms[message.RoomId]; ok {
+			room.Unregister <- client
+			delete(client.rooms, room.ID)
+		}
 	}
-	room.Unregister <- client
 }

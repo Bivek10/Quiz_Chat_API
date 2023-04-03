@@ -3,7 +3,7 @@ package socket
 const welcomeMessage = "%s joined the room"
 
 type Room struct {
-	ID         int `json:"id"`
+	ID         int64 `json:"id"`
 	Clients    map[*Client]bool
 	Register   chan *Client
 	Unregister chan *Client
@@ -11,7 +11,7 @@ type Room struct {
 }
 
 // NewRoom creates a new Room
-func NewRoom(id int) *Room {
+func NewRoom(id int64) *Room {
 	return &Room{
 		ID:         id,
 		Clients:    make(map[*Client]bool),
@@ -25,7 +25,6 @@ func NewRoom(id int) *Room {
 func (room *Room) RunRoom() {
 	for {
 		select {
-
 		case client := <-room.Register:
 			room.registerClientInRoom(client)
 		case client := <-room.Unregister:
@@ -35,7 +34,7 @@ func (room *Room) RunRoom() {
 		}
 	}
 }
-func (room *Room) GetId() int {
+func (room *Room) GetId() int64 {
 	println("room - room ID ", room.ID)
 	return room.ID
 }

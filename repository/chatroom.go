@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"gorm.io/gorm"
+
 	"github.com/bivek/fmt_backend/infrastructure"
 	"github.com/bivek/fmt_backend/models"
 	"github.com/bivek/fmt_backend/utils"
@@ -20,32 +22,43 @@ func NewChatRoomRepository(db infrastructure.Database, logger infrastructure.Log
 	}
 }
 
+func (c ChatRoomRepository) WithTrx(trxHandle *gorm.DB) ChatRoomRepository {
+	if trxHandle == nil {
+		c.logger.Zap.Error("Transction Database not found in gin context")
+		return c
+	}
+	c.db.DB = trxHandle
+	return c
+}
+
 // Create ChatRoom
 func (c ChatRoomRepository) Create(ChatRoom models.ChatRoom) (models.ChatRoom, error) {
-	return ChatRoom, c.db.DB.Create(&ChatRoom).Error
+	// print("Create chat room in repo", ChatRoom)
+	println("I am at chat room repo")
+	err := c.db.DB.Create(&ChatRoom).Error
+	println(err)
+	return ChatRoom, err
+	//return ChatRoom, c.db.DB.Create(&ChatRoom).Error
+
 }
 
 // GetAllChatRoom -> Get All ChatRoom
-func (c ChatRoomRepository) GetAllChatRoom(pagination utils.Pagination) ([]models.ChatRoom, int64, error) {
+func (c ChatRoomRepository) GetAllChatRoom(pagination utils.CursorPagination) ([]models.ChatRoom, int64, error) {
 	var ChatRoom []models.ChatRoom
-	var totalRows int64 = 0
-	queryBuider := c.db.DB.Model(&models.ChatRoom{}).Offset(pagination.Offset).Order(pagination.Sort)
 
-	if !pagination.All {
-		queryBuider = queryBuider.Limit(pagination.PageSize)
-	}
-
-	if pagination.Keyword != "" {
-		searchQuery := "%" + pagination.Keyword + "%"
-		queryBuider.Where(c.db.DB.Where("`ChatRoom`.`title` LIKE ?", searchQuery))
-	}
+	queryBuider := c.db.DB.Model(&models.ChatRoom{})
 
 	err := queryBuider.
 		Find(&ChatRoom).
-		Offset(-1).
-		Limit(-1).
-		Count(&totalRows).Error
-	return ChatRoom, totalRows, err
+		Where("id > ?", pagination.Cursor).
+		Limit(pagination.Limit).
+		Error
+
+	var nextCursor int64
+	if err != nil {
+		nextCursor = ChatRoom[len(ChatRoom)-1].ID
+	}
+	return ChatRoom, nextCursor, err
 }
 
 // GetOneChatRoom -> Get One ChatRoom By Id

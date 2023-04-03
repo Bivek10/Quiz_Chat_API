@@ -3,6 +3,8 @@ package bootstrap
 import (
 	"context"
 
+	"go.uber.org/fx"
+
 	"github.com/bivek/fmt_backend/cli"
 	"github.com/bivek/fmt_backend/controllers"
 	"github.com/bivek/fmt_backend/infrastructure"
@@ -11,9 +13,8 @@ import (
 	"github.com/bivek/fmt_backend/routes"
 	"github.com/bivek/fmt_backend/seeds"
 	"github.com/bivek/fmt_backend/services"
+	"github.com/bivek/fmt_backend/socket"
 	"github.com/bivek/fmt_backend/utils"
-
-	"go.uber.org/fx"
 )
 
 // Module exported for initializing application
@@ -24,6 +25,7 @@ var Module = fx.Options(
 	middlewares.Module,
 	repository.Module,
 	infrastructure.Module,
+	socket.Module,
 	cli.Module,
 	seeds.Module,
 	fx.Invoke(bootstrap),
@@ -40,15 +42,14 @@ func bootstrap(
 	cliApp cli.Application,
 	migrations infrastructure.Migrations,
 	seeds seeds.Seeds,
+	chatServer *socket.WsServer,
 ) {
-
 	appStop := func(context.Context) error {
 		logger.Zap.Info("Stopping Application")
 		conn, _ := database.DB.DB()
 		conn.Close()
 		return nil
 	}
-
 	if utils.IsCli() {
 		lifecycle.Append(fx.Hook{
 			OnStart: func(context.Context) error {
@@ -59,7 +60,6 @@ func bootstrap(
 			},
 			OnStop: appStop,
 		})
-
 		return
 	}
 
@@ -69,7 +69,6 @@ func bootstrap(
 			logger.Zap.Info("------------------------")
 			logger.Zap.Info("------ Boilerplate 📺 ------")
 			logger.Zap.Info("------------------------")
-
 			logger.Zap.Info("Migrating DB schema...")
 			go func() {
 				migrations.Migrate()

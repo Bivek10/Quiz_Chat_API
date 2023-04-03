@@ -13,4 +13,7 @@ var Module = fx.Options(
 	fx.Provide(NewClientRepository),
 	fx.Provide(NewFriendRequestRepository),
 	fx.Provide(NewConversationRepository),
+	fx.Provide(NewChatMemberRepository),
+	fx.Provide(NewChatRoomRepository),
+	fx.Provide(NewChatMessageRepository),
 )

@@ -14,6 +14,10 @@ var Module = fx.Options(
 	fx.Provide(NewClientRoutes),
 	fx.Provide(NewFriendRequestRoutes),
 	fx.Provide(NewConversationRoutes),
+	fx.Provide(NewChatMemberRoutes),
+	fx.Provide(NewChatMessageRoutes),
+	fx.Provide(NewChatRoomRoutes),
+	fx.Provide(NewThreadRoutes),
 	//fx.Provide(NewPlantRoutes),
 )
 
@@ -35,6 +39,10 @@ func NewRoutes(
 	choiceRoutes ChoiceRoutes,
 	historyRoutes HistoryRoutes,
 	clientRoutes ClientRoutes,
+	chatRoomRoutes ChatRoomRoutes,
+	chatMessageRoutes ChatMessageRoutes,
+	chatMemberRoutes ChatMemberRoutes,
+	threadRoutes 	ThreadRoutes,
 
 ) Routes {
 	return Routes{
@@ -45,7 +53,10 @@ func NewRoutes(
 		choiceRoutes,
 		historyRoutes,
 		clientRoutes,
-
+		chatRoomRoutes,
+		chatMessageRoutes,
+		chatMemberRoutes,
+		threadRoutes,
 		//plantRoutes,
 	}
 }

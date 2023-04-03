@@ -19,4 +19,7 @@ var Module = fx.Options(
 	fx.Provide(NewJwtService),
 	fx.Provide(NewFriendRequestService),
 	fx.Provide(NewConversationService),
+	fx.Provide(NewChatMemberService),
+	fx.Provide(NewChatMessageService),
+	fx.Provide(NewChatRoomService),
 )

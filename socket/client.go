@@ -59,6 +59,7 @@ func ServeWs(wsServer *WsServer, c *gin.Context) {
 	go client.readMessage()
 }
 
+
 func newClient(conn *websocket.Conn, wsServer *WsServer, id int) *Client {
 	return &Client{
 		ID:       id,
@@ -182,22 +183,19 @@ func (client *Client) handleSendMessage(message Message) {
 		return
 	}
 	//save message to database and board cast to user.
-	
-	
-		room.Broadcast <- &message
-	
-	
+
+	room.Broadcast <- &message
 
 	//save message to database;
 }
 
 func (client *Client) handleJoinRoomMessage(message Message) {
 	roomID := message.RoomId
-	client.joinRoom(roomID, message.RoomName, message.SenderId)
+	client.joinRoom(roomID, message.RoomName, int64(message.SenderId))
 }
 
 // there should be another create room function
-func (client *Client) joinRoom(roomID int64, roomName string, senderID int) {
+func (client *Client) joinRoom(roomID int64, roomName string, senderID int64) {
 	var chatRoom *Room
 
 	// db room finding and creation
@@ -207,7 +205,7 @@ func (client *Client) joinRoom(roomID int64, roomName string, senderID int) {
 	}
 
 	// find if sender is in this room
-	chatMember := client.wsServer.findMemberInRoom(roomID, senderID)
+	chatMember := client.wsServer.findMemberInRoom(roomID, int64(senderID))
 
 	if chatMember == nil {
 		chatMember = client.wsServer.addMemberInRoom(roomID, senderID)

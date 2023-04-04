@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"fmt"
+
 	"gorm.io/gorm"
 
 	"github.com/bivek/fmt_backend/infrastructure"
@@ -59,6 +61,70 @@ func (c ChatRoomRepository) GetAllChatRoom(pagination utils.CursorPagination) ([
 		nextCursor = ChatRoom[len(ChatRoom)-1].ID
 	}
 	return ChatRoom, nextCursor, err
+}
+
+// GetAllChatRoom -> Get All ChatRoom
+func (c ChatRoomRepository) GetAllRoomByUserID(userID int64) ([]models.RoomMember, int64, error) {
+	var chatRoomMember []models.ChatRoomMember
+
+	//var chatRoom []models.ChatRoom
+
+	var chatMember []models.ChatMember
+
+	queryBuilder := c.db.DB.Model(&models.ChatRoomMember{})
+
+	queryBuilder1 := c.db.DB.Model(&models.ChatMember{})
+	// 	Preload("ChatMember").Where(&models.ChatRoom{Base: models.Base{ID: 21}})
+
+	// queryBuilder := c.db.DB.
+	// 		Model(&models.ChatRoom{}).
+	// 		Where("ID = ?", 21).
+	// 		Preload("ChatMember", func(tx *gorm.DB) *gorm.DB {
+	// 			return tx.Preload("ChatRoom")
+	// 		}).Find(&chatRoom)
+
+	// queryBuilder := c.db.DB.Model(&models.ChatRoom{}).
+	// 	Preload("ChatMember").
+	// 	Where(&models.ChatRoom{Name: "Bivek"}).
+	// 	Find(&chatRoom)
+
+	queryBuilder = queryBuilder.Select("chatroom.*").
+		Joins("JOIN chatmember ON chatroom.id=chatmember.room_id").
+		Where("chatmember.user_id = ?", userID).Find(&chatRoomMember)
+
+	err := queryBuilder.Error
+
+	if err != nil {
+		fmt.Println("error", err)
+	}
+
+	roomIDList := []int{}
+	for i := range chatRoomMember {
+		roomIDList = append(roomIDList, int(chatRoomMember[i].ID))
+		fmt.Println(roomIDList)
+	}
+
+	queryBuilder1 = queryBuilder1.Where("room_id IN (?)", roomIDList).Where("user_id <> ?", userID).Find(&chatMember)
+	err = queryBuilder1.Error
+
+	if err != nil {
+		fmt.Println("error", err)
+	}
+	roomMember := models.RoomMember{}
+	roomMemberlist := []models.RoomMember{}
+	for i := range chatMember {
+		roomMember.RoomID = chatMember[i].RoomID
+		roomMember.RoomName = ""
+		roomMember.Member =models.Member{
+			SendeID:   userID,
+			ReceiverID: chatMember[i].UserID,
+		}
+		roomMemberlist=append(roomMemberlist, roomMember)
+		fmt.Println(roomMember)
+		//fmt.Printf("User id: %v, is available in room id : %v, where member %v \n", userID, chatMember[i].RoomID, chatMember[i].UserID)
+	}
+
+	return roomMemberlist, 0, err
 }
 
 // GetOneChatRoom -> Get One ChatRoom By Id

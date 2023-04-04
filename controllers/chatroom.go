@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -75,6 +76,21 @@ func (cc ChatRoomController) GetAllChatRoom(c *gin.Context) {
 
 }
 
+func (cc ChatRoomController) GetAllChatRoomByUserID(c *gin.Context) {
+	userID, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+
+	ChatRoomMember, cursor, err := cc.ChatRoomService.GetAllRoomByUserID(userID)
+	fmt.Println(cursor)
+	if err != nil {
+		cc.logger.Zap.Error("Error finding ChatRoomMember records", err.Error())
+		err := errors.InternalError.Wrap(err, "Failed To Find ChatRoomMember")
+		responses.HandleError(c, err)
+		return
+	}
+	responses.JSON(c, http.StatusOK, ChatRoomMember)
+	//responses.JSONCursor(c, http.StatusOK, ChatRoomMember, cursor)
+}
+
 // GetOneChatRoom -> Get One ChatRoom
 func (cc ChatRoomController) GetOneChatRoom(c *gin.Context) {
 	ID, _ := strconv.ParseInt(c.Param("id"), 10, 64)
@@ -82,12 +98,11 @@ func (cc ChatRoomController) GetOneChatRoom(c *gin.Context) {
 
 	if err != nil {
 		cc.logger.Zap.Error("Error [GetOneChatRoom] [db GetOneChatRoom]: ", err.Error())
-		err := errors.InternalError.Wrap(err, "Failed To Find ChatRoom")
+		err := errors.InternalError.Wrap(err, "Failed To Find ChatRoo")
 		responses.HandleError(c, err)
 		return
 	}
 	responses.JSON(c, http.StatusOK, ChatRoom)
-
 }
 
 // UpdateOneChatRoom -> Update One ChatRoom By Id
@@ -124,6 +139,5 @@ func (cc ChatRoomController) DeleteOneChatRoom(c *gin.Context) {
 		responses.HandleError(c, err)
 		return
 	}
-
 	responses.SuccessJSON(c, http.StatusOK, "ChatRoom Deleted Sucessfully")
 }

@@ -51,3 +51,7 @@ func (c ChatRoomService) DeleteOneChatRoom(ID int64) error {
 	return c.repository.DeleteOneChatRoom(ID)
 
 }
+
+func (c ChatRoomService) GetAllRoomByUserID(userID int64)([]models.RoomMember, int64, error){
+ return c.repository.GetAllRoomByUserID(userID)
+}

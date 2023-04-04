@@ -18,6 +18,7 @@ type WsServer struct {
 	MessageService   services.ChatMessageService
 }
 
+
 func NewWebsocketServer(chatRoomServices services.ChatRoomService, chatmemeberService services.ChatMemberService, logger infrastructure.Logger, messageService services.ChatMessageService) *WsServer {
 	chatServer := &WsServer{
 		Broadcast:        make(chan []byte),
@@ -70,7 +71,7 @@ func (server *WsServer) createRoom(roomName string, roomID int64) *models.ChatRo
 	return &chatroom
 }
 
-func (server *WsServer) addMemberInRoom(roomID int64, userID int) *models.ChatMember {
+func (server *WsServer) addMemberInRoom(roomID int64, userID int64) *models.ChatMember {
 	chatMember, err := server.ChatMembeService.CreateChatMember(models.ChatMember{UserID: userID, RoomID: roomID})
 	if err != nil {
 		server.Logger.Zap.Error("failed to add member in  room")
@@ -79,7 +80,7 @@ func (server *WsServer) addMemberInRoom(roomID int64, userID int) *models.ChatMe
 	return &chatMember
 }
 
-func (server *WsServer) findMemberInRoom(roomID int64, userID int) *models.ChatMember {
+func (server *WsServer) findMemberInRoom(roomID int64, userID int64) *models.ChatMember {
 	chatMember, err := server.ChatMembeService.GetOneChatMember(int64(userID), roomID)
 	if err != nil {
 		server.Logger.Zap.Error("Unable to get member in room ID", roomID)

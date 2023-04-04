@@ -1,10 +1,11 @@
 package repository
 
 import (
+	"gorm.io/gorm"
+
 	"github.com/bivek/fmt_backend/infrastructure"
 	"github.com/bivek/fmt_backend/models"
 	"github.com/bivek/fmt_backend/utils"
-	"gorm.io/gorm"
 )
 
 type QuestionRepository struct {

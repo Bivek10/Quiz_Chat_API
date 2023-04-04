@@ -12,6 +12,7 @@ type Room struct {
 	Broadcast  chan *Message
 }
 
+
 // NewRoom creates a new Room
 func NewRoom(id int64) *Room {
 	return &Room{

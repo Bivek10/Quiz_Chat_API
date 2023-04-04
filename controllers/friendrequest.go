@@ -12,6 +12,7 @@ import (
 	"github.com/bivek/fmt_backend/models"
 	"github.com/bivek/fmt_backend/responses"
 	"github.com/bivek/fmt_backend/services"
+	"github.com/bivek/fmt_backend/socket"
 	"github.com/bivek/fmt_backend/utils"
 	"github.com/gin-gonic/gin"
 )
@@ -19,16 +20,28 @@ import (
 type FriendRequestController struct {
 	logger               infrastructure.Logger
 	friendrequestService services.FriendRequestService
+	chatRoom             services.ChatRoomService
+	chatMember           services.ChatMemberService
 	env                  infrastructure.Env
 	firbaseSerives       services.FirebaseService
+	wsServer             *socket.WsServer
 }
 
-func NewFriendRequestController(logger infrastructure.Logger, firedrequestservice services.FriendRequestService, env infrastructure.Env, firebaseService services.FirebaseService) FriendRequestController {
+func NewFriendRequestController(logger infrastructure.Logger,
+	firedrequestservice services.FriendRequestService,
+	env infrastructure.Env, firebaseService services.FirebaseService,
+	wsSever *socket.WsServer,
+	chatRoom services.ChatRoomService,
+	chatMember services.ChatMemberService,
+) FriendRequestController {
 	return FriendRequestController{
 		logger:               logger,
 		friendrequestService: firedrequestservice,
 		env:                  env,
 		firbaseSerives:       firebaseService,
+		wsServer:             wsSever,
+		chatRoom:             chatRoom,
+		chatMember:           chatMember,
 	}
 
 }
@@ -57,6 +70,7 @@ func (fc FriendRequestController) SendRequest(c *gin.Context) {
 
 func (fc FriendRequestController) AcceptRequest(c *gin.Context) {
 	friendsModel := models.FriendRequest{}
+	trx := c.MustGet(constants.DBTransaction).(*gorm.DB)
 
 	if err := c.ShouldBindJSON(&friendsModel); err != nil {
 		fc.logger.Zap.Error("Error on Binding", err)
@@ -66,13 +80,51 @@ func (fc FriendRequestController) AcceptRequest(c *gin.Context) {
 
 	if err := fc.friendrequestService.AcceptRequest(friendsModel); err != nil {
 		fc.logger.Zap.Error("Error on sending request", err)
-		err := errors.InternalError.Wrap(err, "Failed to accept request")
+		err := errors.InternalError.Wrap(err, "Failed to Accept Request")
 
 		responses.HandleError(c, err)
 		return
 	}
 
-	responses.SuccessJSON(c, http.StatusOK, "Request Accepted")
+	chatRoomModel := models.ChatRoom{Name: "chatroom"}
+	dbRoom, err := fc.chatRoom.WithTrx(trx).CreateChatRoom(chatRoomModel)
+	if err != nil {
+		fc.logger.Zap.Error("Error [CreatRoom] (CreateRoom) :", err)
+		err := errors.BadRequest.Wrap(err, "Failed to Create Room")
+		responses.HandleError(c, err)
+		return
+	}
+	chatMemberModel := models.ChatMember{RoomID: dbRoom.ID, UserID: friendsModel.Sender}
+
+	dbMember, err := fc.chatMember.CreateChatMember(chatMemberModel)
+
+	if err != nil {
+		fc.logger.Zap.Error("Error [CreatMember] (CreateMember) :", err)
+		err := errors.BadRequest.Wrap(err, "Failed to Create Member")
+		responses.HandleError(c, err)
+		return
+	}
+
+	chatMemberModel1 := models.ChatMember{RoomID: dbRoom.ID, UserID: friendsModel.Receiver}
+
+	dbMember1, err := fc.chatMember.CreateChatMember(chatMemberModel1)
+
+	if err != nil {
+		fc.logger.Zap.Error("Error [CreatMember1] (CreateMember1) :", err)
+		err := errors.BadRequest.Wrap(err, "Failed to Create Member1")
+		responses.HandleError(c, err)
+		return
+	}
+	println("Member added", dbMember.UserID)
+	println("Member added", dbMember1.UserID)
+	
+
+	//c.Set("senderid", friendsModel.Sender,)
+	//c.Set("receiverid", friendsModel.Receiver)
+	//create websocket now.
+	//socket.ServeWs1(fc.wsServer, c)
+
+	responses.SuccessJSON(c, http.StatusOK, "Request Accepted and Room created successfully")
 }
 
 func (fc FriendRequestController) CancleRequest(c *gin.Context) {

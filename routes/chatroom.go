@@ -32,11 +32,12 @@ func NewChatRoomRoutes(
 // Setup chatRoom routes
 func (c ChatRoomRoutes) Setup() {
 	c.logger.Zap.Info(" Setting up chatRoom routes")
-	chatRoom := c.router.Gin.Group("/chatRoom")
+	chatRoom := c.router.Gin.Group("/chatroom")
 	{
 		chatRoom.POST("", c.chatRoomController.CreateChatRoom)
 		chatRoom.GET("", c.chatRoomController.GetAllChatRoom)
 		chatRoom.GET("/:id", c.chatRoomController.GetOneChatRoom)
+		chatRoom.GET("member/:id", c.chatRoomController.GetAllChatRoomByUserID)
 		chatRoom.PUT("/:id", c.chatRoomController.UpdateOneChatRoom)
 		chatRoom.DELETE("/:id", c.chatRoomController.DeleteOneChatRoom)
 	}

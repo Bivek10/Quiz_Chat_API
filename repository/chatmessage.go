@@ -29,22 +29,23 @@ func (c ChatMessageRepository) Create(ChatMessage models.ChatMessage) (models.Ch
 // GetAllChatMessage -> Get All ChatMessage
 func (c ChatMessageRepository) GetAllChatMessage(pagination utils.CursorPagination, roomID int) ([]models.ChatMessage, int64, error) {
 	var ChatMessage []models.ChatMessage
-	//var totalRows int64 = 0
-
-	queryBuider := c.db.DB.Model(&models.ChatMessage{})
+	
+	queryBuider := c.db.DB.Model(&models.ChatMessage{}).
+		Limit(2).
+		Where("room_id = ?", roomID).
+		Where("id > ?", pagination.Cursor)
 
 	err := queryBuider.
 		Find(&ChatMessage).
-		Where("room_id = ?", roomID).
-		Where("id > ?", pagination.Cursor).
-		Limit(pagination.Limit).Error
-
+		Limit(pagination.Limit).
+		Error
 	var nextCursor int64
 
-	if err != nil {
-		nextCursor = ChatMessage[len(ChatMessage)-1].ID
+	if err == nil {
+		if len(ChatMessage) > 0 {
+			nextCursor = ChatMessage[len(ChatMessage)-1].ID
+		}
 	}
-
 	return ChatMessage, nextCursor, err
 }
 

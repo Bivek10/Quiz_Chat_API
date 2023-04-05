@@ -54,7 +54,6 @@ func (cc ChatMessageController) CreateChatMessage(c *gin.Context) {
 // GetAllChatMessage -> Get All ChatMessage
 func (cc ChatMessageController) GetAllChatMessage(c *gin.Context) {
 	roomID, err := strconv.ParseInt(c.Param("roomid"), 10, 64)
-
 	if err != nil {
 		cc.logger.Zap.Error("invalid room id", err.Error())
 		err := errors.InternalError.Wrap(err, "invalid room id")

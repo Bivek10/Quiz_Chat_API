@@ -37,6 +37,6 @@ func (c ChatMessageRoutes) Setup() {
 		chatMessage.POST("", c.chatMessageController.CreateChatMessage)
 		chatMessage.GET(":roomid", c.chatMessageController.GetAllChatMessage)
 
-		chatMessage.DELETE("/:id", c.chatMessageController.DeleteOneChatMessage)
+		chatMessage.DELETE(":id", c.chatMessageController.DeleteOneChatMessage)
 	}
 }

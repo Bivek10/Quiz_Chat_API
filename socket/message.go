@@ -5,17 +5,15 @@ import (
 	"fmt"
 )
 
-// Action: What action is the message requestin
-const SendMessageAction = "send-message"
-const JoinRoomAction = "join-room"
-const LeaveRoomAction = "leave-room"
+// Action: What action is the message requesting
+const SendMessageAction = "send"
+const LeaveRoomAction = "leave"
 
 type Message struct {
 	Action   string `json:"action"`
 	Message  string `json:"message"`
 	RoomId   int64  `json:"roomId"`
 	SenderId int    `json:"senderId"`
-	RoomName string `json:"roomName"`
 }
 
 func (message *Message) encode() []byte {

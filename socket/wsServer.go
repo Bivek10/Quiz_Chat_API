@@ -1,8 +1,6 @@
 package socket
 
 import (
-	"fmt"
-
 	"github.com/bivek/fmt_backend/infrastructure"
 	"github.com/bivek/fmt_backend/models"
 	"github.com/bivek/fmt_backend/services"
@@ -33,15 +31,13 @@ func NewWebsocketServer(chatRoomServices services.ChatRoomService, chatmemeberSe
 		ChatMembeService: chatmemeberService,
 		MessageService:   messageService,
 	}
-	//go chatServer.Run()
+	go chatServer.Run()
 	return chatServer
 }
-
 func (server *WsServer) Run() {
 	for {
 		select {
 		case client := <-server.Register:
-			fmt.Println("rooms :::::::",client.rooms)
 			server.registerClient(client)
 
 		case client := <-server.Unregister:
@@ -50,10 +46,10 @@ func (server *WsServer) Run() {
 		}
 	}
 }
-
 // register client to the server
 func (server *WsServer) registerClient(client *Client) {
 	server.Client[client] = true
+	
 }
 
 // Delete the clent from the server after it's is lost its connection

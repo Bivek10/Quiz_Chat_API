@@ -39,7 +39,6 @@ type Client struct {
 
 func ServeWs(wsServer *WsServer, c *gin.Context) {
 	conn, err := helpers.Upgrade(c.Writer, c.Request)
-
 	if err != nil {
 		println("the errror is", err)
 	}
@@ -50,17 +49,16 @@ func ServeWs(wsServer *WsServer, c *gin.Context) {
 		log.Println("Url Param 'Id' is invalid", errs)
 		return
 	}
-	fmt.Println("Connected to web server")
 	client := *newClient(conn, wsServer, userid)
+
 	// set the user status to online
 	// broadcast to all the users of the users room online message
 	wsServer.Register <- &client
-	//register clients to multiple room at a time
-	//get room from database and do
+
+	client.joinUserInAllRoom(int64(client.ID))
 	go client.writeMessage()
 	go client.readMessage()
 }
-
 
 func newClient(conn *websocket.Conn, wsServer *WsServer, id int) *Client {
 	return &Client{
@@ -90,7 +88,6 @@ func (client *Client) readMessage() {
 		println("json handle mesesae", jsonMessage)
 		client.handleNewMessages(jsonMessage)
 	}
-
 }
 
 func (client *Client) writeMessage() {
@@ -147,6 +144,10 @@ func (client *Client) disconnect() {
 func (client *Client) findRoomByID(ID int64) *Room {
 	var Room *Room
 	for _, room := range client.rooms {
+		fmt.Println("room id", room.ID)
+		fmt.Println("length", len(client.rooms))
+		fmt.Println("get id room", room.GetId())
+		fmt.Println("get id room ID", ID)
 		if room.GetId() == ID {
 			Room = room
 			break
@@ -169,61 +170,25 @@ func (client *Client) handleNewMessages(jsonMessage []byte) {
 		//save the message in database over here
 		client.handleSendMessage(message)
 
-	case JoinRoomAction:
-		client.handleJoinRoomMessage(message)
-
 	case LeaveRoomAction:
 		client.handleLeaveRoomMessage(message)
 	}
-	//  user online status message  to all the clients in the user room
+
 }
 
 func (client *Client) handleSendMessage(message Message) {
 	room := client.findRoomByID(message.RoomId)
+	fmt.Println("room =======id", room.ID)
 	if room == nil {
 		println("The room you are trying to send message doesnot present")
 		return
 	}
-	//save message to database and board cast to user.
 
 	room.Broadcast <- &message
 
-	//save message to database;
-}
-
-func (client *Client) handleJoinRoomMessage(message Message) {
-	roomID := message.RoomId
-	client.joinRoom(roomID, message.RoomName, int64(message.SenderId))
 }
 
 // there should be another create room function
-func (client *Client) joinRoom(roomID int64, roomName string, senderID int64) {
-	var chatRoom *Room
-
-	// db room finding and creation
-	dbRoom := client.wsServer.findRoomByID(roomID)
-	if dbRoom == nil {
-		dbRoom = client.wsServer.createRoom(roomName, roomID)
-	}
-
-	// find if sender is in this room
-	chatMember := client.wsServer.findMemberInRoom(roomID, int64(senderID))
-
-	if chatMember == nil {
-		chatMember = client.wsServer.addMemberInRoom(roomID, senderID)
-	}
-
-	chatRoom = client.wsServer.Rooms[dbRoom.ID]
-	if chatRoom == nil {
-		room := NewRoom(dbRoom.ID)
-		client.wsServer.Rooms[dbRoom.ID] = room
-		chatRoom = client.wsServer.Rooms[dbRoom.ID]
-		go room.RunRoom()
-	}
-	//add client to room
-	client.rooms[chatRoom.ID] = chatRoom
-	chatRoom.Register <- client
-}
 
 func (client *Client) handleLeaveRoomMessage(message Message) {
 	// delete  this room from client in  the database
@@ -231,8 +196,38 @@ func (client *Client) handleLeaveRoomMessage(message Message) {
 	dbRoom := client.wsServer.findRoomByID(roomId)
 	if dbRoom != nil {
 		if room, ok := client.rooms[message.RoomId]; ok {
+			fmt.Println("clients::::::", client.ID)
+			err := client.wsServer.ChatMembeService.DeleteOneChatMember(int64(client.ID))
+			if err != nil {
+				client.wsServer.Logger.Zap.Error("Failed to delete member", err)
+			}
 			room.Unregister <- client
 			delete(client.rooms, room.ID)
 		}
 	}
+}
+
+// join the member in room once connected to web server.
+func (client *Client) joinUserInAllRoom(userID int64) {
+	var chatRoom *Room
+	// db room finding and creation
+	dbAllRoom, _, err := client.wsServer.ChatRoomService.GetAllRoomByUserID(userID)
+
+	if err != nil {
+		fmt.Println("error:get all room by user", err)
+	}
+	for i := range dbAllRoom {
+		dbRoom := dbAllRoom[i]
+		chatRoom = client.wsServer.Rooms[dbRoom.RoomID]
+		if chatRoom == nil {
+			room := NewRoom(dbRoom.RoomID)
+			client.wsServer.Rooms[dbRoom.RoomID] = room
+			chatRoom = client.wsServer.Rooms[dbRoom.RoomID]
+			go room.RunRoom()
+		}
+		client.rooms[chatRoom.ID] = chatRoom
+		chatRoom.Register <- client
+		
+	}
+	fmt.Println("chat room length", len(client.rooms))
 }

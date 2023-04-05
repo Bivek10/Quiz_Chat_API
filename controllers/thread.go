@@ -2,20 +2,20 @@ package controllers
 
 import (
 	"github.com/bivek/fmt_backend/infrastructure"
-	"github.com/bivek/fmt_backend/socket1"
+	"github.com/bivek/fmt_backend/socket"
 	"github.com/gin-gonic/gin"
 )
 
 type ThreadController struct {
 	logger   infrastructure.Logger
 	db       infrastructure.Database
-	wsServer *socket1.WsServer
+	wsServer *socket.WsServer
 }
 
 func NewThreadController(
 	logger infrastructure.Logger,
 	db infrastructure.Database,
-	wsServer *socket1.WsServer,
+	wsServer *socket.WsServer,
 
 ) ThreadController {
 	return ThreadController{
@@ -26,5 +26,5 @@ func NewThreadController(
 }
 
 func (tc *ThreadController) ServeWs(c *gin.Context) {
-	socket1.ServeWs(tc.wsServer, c)
+	socket.ServeWs(tc.wsServer, c)
 }

@@ -13,7 +13,7 @@ import (
 	"github.com/bivek/fmt_backend/routes"
 	"github.com/bivek/fmt_backend/seeds"
 	"github.com/bivek/fmt_backend/services"
-	"github.com/bivek/fmt_backend/socket1"
+	"github.com/bivek/fmt_backend/socket"
 	"github.com/bivek/fmt_backend/utils"
 )
 
@@ -25,7 +25,7 @@ var Module = fx.Options(
 	middlewares.Module,
 	repository.Module,
 	infrastructure.Module,
-	socket1.Module,
+	socket.Module,
 	cli.Module,
 	seeds.Module,
 	fx.Invoke(bootstrap),
@@ -42,11 +42,12 @@ func bootstrap(
 	cliApp cli.Application,
 	migrations infrastructure.Migrations,
 	seeds seeds.Seeds,
-	chatServer *socket1.WsServer,
+	chatServer *socket.WsServer,
 ) {
 	appStop := func(context.Context) error {
 		logger.Zap.Info("Stopping Application")
 		conn, _ := database.DB.DB()
+	
 		conn.Close()
 		return nil
 	}

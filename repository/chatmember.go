@@ -79,7 +79,7 @@ func (c ChatMemberRepository) UpdateOneChatMember(ChatMember models.ChatMember) 
 // DeleteOneChatMember -> Delete One ChatMember By Id
 func (c ChatMemberRepository) DeleteOneChatMember(ID int64) error {
 	return c.db.DB.
-		Where("id = ?", ID).
+		Where("user_id= ?", ID).
 		Delete(&models.ChatMember{}).
 		Error
 }

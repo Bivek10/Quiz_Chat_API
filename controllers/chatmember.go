@@ -15,8 +15,8 @@ import (
 
 // ChatMemberController -> struct
 type ChatMemberController struct {
-	logger                 infrastructure.Logger
-	ChatMemberService  services.ChatMemberService
+	logger            infrastructure.Logger
+	ChatMemberService services.ChatMemberService
 }
 
 // NewChatMemberController -> constructor
@@ -25,10 +25,12 @@ func NewChatMemberController(
 	ChatMemberService services.ChatMemberService,
 ) ChatMemberController {
 	return ChatMemberController{
-		logger:                  logger,
-		ChatMemberService:  ChatMemberService,
+		logger:            logger,
+		ChatMemberService: ChatMemberService,
 	}
 }
+
+
 
 // CreateChatMember -> Create ChatMember
 func (cc ChatMemberController) CreateChatMember(c *gin.Context) {

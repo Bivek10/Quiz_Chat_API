@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -87,7 +88,9 @@ func (fc FriendRequestController) AcceptRequest(c *gin.Context) {
 	}
 
 	chatRoomModel := models.ChatRoom{Name: "chatroom"}
+	
 	dbRoom, err := fc.chatRoom.WithTrx(trx).CreateChatRoom(chatRoomModel)
+	fmt.Println("Chatroom id", dbRoom.ID)
 	if err != nil {
 		fc.logger.Zap.Error("Error [CreatRoom] (CreateRoom) :", err)
 		err := errors.BadRequest.Wrap(err, "Failed to Create Room")
@@ -96,7 +99,8 @@ func (fc FriendRequestController) AcceptRequest(c *gin.Context) {
 	}
 	chatMemberModel := models.ChatMember{RoomID: dbRoom.ID, UserID: friendsModel.Sender}
 
-	dbMember, err := fc.chatMember.CreateChatMember(chatMemberModel)
+	dbMember, err := fc.chatMember.WithTrx(trx).CreateChatMember(chatMemberModel)
+	
 
 	if err != nil {
 		fc.logger.Zap.Error("Error [CreatMember] (CreateMember) :", err)
@@ -107,7 +111,7 @@ func (fc FriendRequestController) AcceptRequest(c *gin.Context) {
 
 	chatMemberModel1 := models.ChatMember{RoomID: dbRoom.ID, UserID: friendsModel.Receiver}
 
-	dbMember1, err := fc.chatMember.CreateChatMember(chatMemberModel1)
+	dbMember1, err := fc.chatMember.WithTrx(trx).CreateChatMember(chatMemberModel1)
 
 	if err != nil {
 		fc.logger.Zap.Error("Error [CreatMember1] (CreateMember1) :", err)
@@ -115,9 +119,8 @@ func (fc FriendRequestController) AcceptRequest(c *gin.Context) {
 		responses.HandleError(c, err)
 		return
 	}
-	println("Member added", dbMember.UserID)
-	println("Member added", dbMember1.UserID)
-	
+	fmt.Println("Member added", dbMember.UserID)
+	fmt.Println("Member added", dbMember1.UserID)
 
 	//c.Set("senderid", friendsModel.Sender,)
 	//c.Set("receiverid", friendsModel.Receiver)

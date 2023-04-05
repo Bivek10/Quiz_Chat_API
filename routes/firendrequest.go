@@ -24,7 +24,7 @@ func (i FriendRequestRoutes) Setup() {
 		quizs.GET("pending/:id", i.friendRequestController.GetPendingFriend)
 		quizs.GET("unfriend/:id", i.friendRequestController.GetUnFriend)
 		quizs.DELETE(":id", i.friendRequestController.CancleRequest)
-		quizs.PUT("", i.friendRequestController.AcceptRequest)
+		quizs.PUT("", i.trxMiddleware.DBTransactionHandle(), i.friendRequestController.AcceptRequest)
 		quizs.POST("", i.trxMiddleware.DBTransactionHandle(), i.friendRequestController.SendRequest)
 	}
 }

@@ -38,7 +38,8 @@ func (fr FriendRequestRepository) SendRequest(friendRequest models.FriendRequest
 // acceptrequest
 func (fr FriendRequestRepository) AcceptRequest(friendRequest models.FriendRequest) error {
 	return fr.db.DB.Model(&models.FriendRequest{}).
-		Where("sender = ?", friendRequest.Sender).
+		Where("receiver = ?", friendRequest.Receiver).
+		Where("sender=?", friendRequest.Sender).
 		Updates(map[string]interface{}{
 			"status": friendRequest.Status,
 		}).Error

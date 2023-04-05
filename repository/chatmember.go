@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"gorm.io/gorm"
+
 	"github.com/bivek/fmt_backend/infrastructure"
 	"github.com/bivek/fmt_backend/models"
 	"github.com/bivek/fmt_backend/utils"
@@ -18,6 +20,15 @@ func NewChatMemberRepository(db infrastructure.Database, logger infrastructure.L
 		db:     db,
 		logger: logger,
 	}
+}
+
+func (c ChatMemberRepository) WithTrx(trxHandle *gorm.DB) ChatMemberRepository {
+	if trxHandle == nil {
+		c.logger.Zap.Error("Transction Database not found in gin context")
+		return c
+	}
+	c.db.DB = trxHandle
+	return c
 }
 
 // Create ChatMember

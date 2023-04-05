@@ -1,6 +1,8 @@
 package services
 
 import (
+	"gorm.io/gorm"
+
 	"github.com/bivek/fmt_backend/models"
 	"github.com/bivek/fmt_backend/repository"
 	"github.com/bivek/fmt_backend/utils"
@@ -16,6 +18,11 @@ func NewChatMemberService(repository repository.ChatMemberRepository) ChatMember
 	return ChatMemberService{
 		repository: repository,
 	}
+}
+
+func (c ChatMemberService) WithTrx(trxHandle *gorm.DB) ChatMemberService {
+	c.repository = c.repository.WithTrx(trxHandle)
+	return c
 }
 
 // CreateChatMember -> call to create the ChatMember

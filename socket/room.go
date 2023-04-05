@@ -11,8 +11,6 @@ type Room struct {
 	Unregister chan *Client
 	Broadcast  chan *Message
 }
-
-
 // NewRoom creates a new Room
 func NewRoom(id int64) *Room {
 	return &Room{
@@ -23,7 +21,6 @@ func NewRoom(id int64) *Room {
 		Broadcast:  make(chan *Message),
 	}
 }
-
 // RunRoom runs our room, accepting various requests
 func (room *Room) RunRoom() {
 	for {
@@ -37,17 +34,15 @@ func (room *Room) RunRoom() {
 		}
 	}
 }
+
 func (room *Room) GetId() int64 {
 	println("room - room ID ", room.ID)
 	return room.ID
 }
-
 // register and notify others users
 func (room *Room) registerClientInRoom(client *Client) {
-
 	room.Clients[client] = true
 }
-
 // unregister client from the room
 func (room *Room) unregisterClientInRoom(client *Client) {
 	// delete this client from the room database
@@ -55,7 +50,6 @@ func (room *Room) unregisterClientInRoom(client *Client) {
 		delete(room.Clients, client)
 	}
 }
-
 func (room *Room) broadcastToClientsInRoom(message []byte, messages *Message) {
 	// save this message to room
 	// broadcast to all online users
@@ -64,7 +58,7 @@ func (room *Room) broadcastToClientsInRoom(message []byte, messages *Message) {
 		print("client list", client.ID)
 		if client.ID != messages.SenderId {
 			messageModel := models.ChatMessage{Message: messages.Message, UserID: messages.SenderId, RoomID: int(messages.RoomId)}
-			dbMessage := client.wsServer.saveMessage(messageModel);
+			dbMessage := client.wsServer.saveMessage(messageModel)
 			if dbMessage != nil {
 				client.wsServer.saveMessage(messageModel)
 				client.Send <- message

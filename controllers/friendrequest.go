@@ -13,7 +13,6 @@ import (
 	"github.com/bivek/fmt_backend/models"
 	"github.com/bivek/fmt_backend/responses"
 	"github.com/bivek/fmt_backend/services"
-	"github.com/bivek/fmt_backend/socket"
 	"github.com/bivek/fmt_backend/utils"
 	"github.com/gin-gonic/gin"
 )
@@ -25,13 +24,12 @@ type FriendRequestController struct {
 	chatMember           services.ChatMemberService
 	env                  infrastructure.Env
 	firbaseSerives       services.FirebaseService
-	wsServer             *socket.WsServer
 }
 
 func NewFriendRequestController(logger infrastructure.Logger,
 	firedrequestservice services.FriendRequestService,
 	env infrastructure.Env, firebaseService services.FirebaseService,
-	wsSever *socket.WsServer,
+
 	chatRoom services.ChatRoomService,
 	chatMember services.ChatMemberService,
 ) FriendRequestController {
@@ -40,9 +38,9 @@ func NewFriendRequestController(logger infrastructure.Logger,
 		friendrequestService: firedrequestservice,
 		env:                  env,
 		firbaseSerives:       firebaseService,
-		wsServer:             wsSever,
-		chatRoom:             chatRoom,
-		chatMember:           chatMember,
+
+		chatRoom:   chatRoom,
+		chatMember: chatMember,
 	}
 
 }
@@ -88,7 +86,7 @@ func (fc FriendRequestController) AcceptRequest(c *gin.Context) {
 	}
 
 	chatRoomModel := models.ChatRoom{Name: "chatroom"}
-	
+
 	dbRoom, err := fc.chatRoom.WithTrx(trx).CreateChatRoom(chatRoomModel)
 	fmt.Println("Chatroom id", dbRoom.ID)
 	if err != nil {
@@ -100,7 +98,6 @@ func (fc FriendRequestController) AcceptRequest(c *gin.Context) {
 	chatMemberModel := models.ChatMember{RoomID: dbRoom.ID, UserID: friendsModel.Sender}
 
 	dbMember, err := fc.chatMember.WithTrx(trx).CreateChatMember(chatMemberModel)
-	
 
 	if err != nil {
 		fc.logger.Zap.Error("Error [CreatMember] (CreateMember) :", err)

@@ -2,6 +2,7 @@ package socket
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"strconv"
 	"time"
@@ -38,6 +39,7 @@ type Client struct {
 
 func ServeWs(wsServer *WsServer, c *gin.Context) {
 	conn, err := helpers.Upgrade(c.Writer, c.Request)
+
 	if err != nil {
 		println("the errror is", err)
 	}
@@ -48,8 +50,8 @@ func ServeWs(wsServer *WsServer, c *gin.Context) {
 		log.Println("Url Param 'Id' is invalid", errs)
 		return
 	}
+	fmt.Println("Connected to web server")
 	client := *newClient(conn, wsServer, userid)
-
 	// set the user status to online
 	// broadcast to all the users of the users room online message
 	wsServer.Register <- &client

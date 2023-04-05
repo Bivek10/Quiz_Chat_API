@@ -36,9 +36,9 @@ func (c ChatRoomRoutes) Setup() {
 	{
 		chatRoom.POST("", c.chatRoomController.CreateChatRoom)
 		chatRoom.GET("", c.chatRoomController.GetAllChatRoom)
-		chatRoom.GET("/:id", c.chatRoomController.GetOneChatRoom)
+		chatRoom.GET(":id", c.chatRoomController.GetOneChatRoom)
 		chatRoom.GET("member/:id", c.chatRoomController.GetAllChatRoomByUserID)
-		chatRoom.PUT("/:id", c.chatRoomController.UpdateOneChatRoom)
-		chatRoom.DELETE("/:id", c.chatRoomController.DeleteOneChatRoom)
+		chatRoom.PUT(":id", c.chatRoomController.UpdateOneChatRoom)
+		chatRoom.DELETE(":id", c.chatRoomController.DeleteOneChatRoom)
 	}
 }

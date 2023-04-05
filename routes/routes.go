@@ -42,6 +42,7 @@ func NewRoutes(
 	chatRoomRoutes ChatRoomRoutes,
 	chatMessageRoutes ChatMessageRoutes,
 	chatMemberRoutes ChatMemberRoutes,
+	friendrequestRoutes FriendRequestRoutes,
 	threadRoutes 	ThreadRoutes,
 
 ) Routes {
@@ -57,6 +58,7 @@ func NewRoutes(
 		chatMessageRoutes,
 		chatMemberRoutes,
 		threadRoutes,
+		friendrequestRoutes,
 		//plantRoutes,
 	}
 }

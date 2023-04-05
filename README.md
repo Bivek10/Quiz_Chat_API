@@ -76,3 +76,13 @@ and,
 
 
 //https://dev.to/jeroendk/multi-room-chat-application-with-websockets-in-go-and-vue-js-part-2-3la8
+
+
+{
+            "room_id": 21,
+            "room_name": "",
+            "member": {
+                "sender_id": 7,
+                "receiver_id": 4
+            }
+        }

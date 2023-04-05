@@ -35,7 +35,7 @@ func (fr FriendRequestRepository) SendRequest(friendRequest models.FriendRequest
 	return fr.db.DB.Create(&friendRequest).Error
 }
 
-//acceptrequest
+// acceptrequest
 func (fr FriendRequestRepository) AcceptRequest(friendRequest models.FriendRequest) error {
 	return fr.db.DB.Model(&models.FriendRequest{}).
 		Where("sender = ?", friendRequest.Sender).
@@ -70,12 +70,15 @@ func (fr FriendRequestRepository) GetAcceptedFriend(pagination utils.Pagination,
 }
 
 // get pending friendlist
-func (fr FriendRequestRepository) GetPendingFriend(pagination utils.Pagination, clientID int) ([]models.Clients, int64, error) {
-	var friendlist []models.Clients
+func (fr FriendRequestRepository) GetPendingFriend(pagination utils.Pagination, clientID int) ([]models.ClientResponse, int64, error) {
+	var friendlist []models.ClientResponse
 
 	var count int64
 
-	queryBuilder := fr.db.DB.Model(&models.Clients{}).Joins("join friendrequest on friendrequest.sender = ? ", clientID).Where("status = ?", constants.Pending)
+	queryBuilder := fr.db.DB.Model(&models.Clients{}).
+		Joins("left join friendrequest on clients.id = friendrequest.receiver").
+		Where("friendrequest.status = ? ", constants.Pending).
+		Where("friendrequest.sender= ?", clientID)
 
 	queryBuilder = queryBuilder.Offset(pagination.Offset).Order("created_at desc")
 
@@ -86,6 +89,9 @@ func (fr FriendRequestRepository) GetPendingFriend(pagination utils.Pagination, 
 	err := queryBuilder.Find(&friendlist).Error
 
 	return friendlist, count, err
+	// 	select * from clients left join friendrequest on
+	// clients.id=friendrequest.receiver
+	// where friendrequest.sender =8 and friendrequest.status="pending";
 
 }
 
@@ -100,14 +106,21 @@ func (fr FriendRequestRepository) CancleRequest(clientID int) error {
 
 //get All Un-Friend list
 
-func (fr FriendRequestRepository) GetUnFriend(pagination utils.Pagination, clientID int) ([]models.Clients, int64, error) {
-	var unfriendlist []models.Clients
+func (fr FriendRequestRepository) GetUnFriend(pagination utils.Pagination, clientID int) ([]models.ClientResponse, int64, error) {
+	var unfriendlist []models.ClientResponse
 
 	var count int64
 
-	queryBuilder := fr.db.DB.Model(&models.Clients{}).Joins("join friendrequest on friendrequest.sender = ? ", clientID).Where("status = ?", constants.Pending)
+	queryBuilder := fr.db.DB.
+		Table("clients").
+		Select("*").
+		Joins("LEFT JOIN friendrequest ON clients.id = friendrequest.receiver").
+		Where("clients.id NOT IN (?) AND clients.id NOT IN (?)",
+			fr.db.DB.Table("friendrequest").Select("receiver").Where("sender = ?", clientID),
+			fr.db.DB.Table("friendrequest").Select("sender").Where("receiver = ?", clientID),
+		)
 
-	queryBuilder = queryBuilder.Offset(pagination.Offset).Order("created_at desc")
+	queryBuilder = queryBuilder.Offset(pagination.Offset).Order("clients.created_at desc ")
 
 	if !pagination.All {
 		queryBuilder = queryBuilder.Limit(pagination.PageSize)
@@ -116,4 +129,12 @@ func (fr FriendRequestRepository) GetUnFriend(pagination utils.Pagination, clien
 	err := queryBuilder.Find(&unfriendlist).Error
 
 	return unfriendlist, count, err
+
+	// select * from clients left join friendrequest on
+	// clients.id = friendrequest.receiver
+	// where clients.id not in
+	// (select receiver from friendrequest where sender=8) AND
+	// clients.id not in
+	// (select sender from friendrequest where receiver=8);
+
 }

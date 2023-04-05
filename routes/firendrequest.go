@@ -20,9 +20,9 @@ func (i FriendRequestRoutes) Setup() {
 	i.logger.Zap.Info("setting up FriendRequest routes")
 	quizs := i.router.Gin.Group("/request")
 	{
-		quizs.GET("/accepted/:id", i.friendRequestController.GetAcceptedFriend)
-		quizs.GET("/pending/:id", i.friendRequestController.GetPendingFriend)
-		quizs.GET("/unfriend/:id", i.friendRequestController.GetUnFriend)
+		quizs.GET("accepted/:id", i.friendRequestController.GetAcceptedFriend)
+		quizs.GET("pending/:id", i.friendRequestController.GetPendingFriend)
+		quizs.GET("unfriend/:id", i.friendRequestController.GetUnFriend)
 		quizs.DELETE(":id", i.friendRequestController.CancleRequest)
 		quizs.PUT("", i.friendRequestController.AcceptRequest)
 		quizs.POST("", i.trxMiddleware.DBTransactionHandle(), i.friendRequestController.SendRequest)

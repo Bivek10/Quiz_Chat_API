@@ -2,7 +2,10 @@ package services
 
 import (
 	"bytes"
+	"cloud.google.com/go/storage"
 	"context"
+	"github.com/bivek/fmt_backend/infrastructure"
+	"golang.org/x/oauth2/google"
 	"image"
 	"image/jpeg"
 	"image/png"
@@ -12,9 +15,6 @@ import (
 	"net/url"
 	"strings"
 	"time"
-	"github.com/bivek/fmt_backend/infrastructure"
-	"cloud.google.com/go/storage"
-	"golang.org/x/oauth2/google"
 )
 
 // StorageBucketService -> handles the file upload/download functions
@@ -170,52 +170,49 @@ func (s StorageBucketService) RemoveObject() {
 
 }
 
-func(s StorageBucketService) UploadThumbnailFile(ctx context.Context,
+func (s StorageBucketService) UploadThumbnailFile(ctx context.Context,
 	file image.Image,
-	fileName string, extension string)(string ,error){
+	fileName string, extension string) (string, error) {
 
-		var bucketName = s.env.StorageBucketName
-		if bucketName == "" {
-			s.logger.Zap.Fatal("Please check your env file for StorageBucketName")
-		}
-	
-		_, err := s.client.Bucket(bucketName).Attrs(ctx)
-		if err == storage.ErrBucketNotExist {
-			s.logger.Zap.Fatalf("provided bucket %v doesn't exists", bucketName)
-		}
-		if err != nil {
-			s.logger.Zap.Fatalf("cloud bucket error: %v", err.Error())
-		}
- 	
-		wc := s.client.Bucket(bucketName).Object(fileName).NewWriter(ctx)
-		wc.ContentType = "application/octet-stream"
-
-		if extension == "jpg" || extension == "jpeg" {
-			err = jpeg.Encode(wc, file, nil)
-		} else {
-			err = png.Encode(wc, file)
-		}
-
-		if err != nil {
-			return "", err
-		}
-
-		if err := wc.Close(); err != nil {
-			return "", err
-		}
-	
-		u, err := url.ParseRequestURI("/" + bucketName + "/" + wc.Attrs().Name)
-		if err != nil {
-			return "", err
-		}
-	
-		path := u.EscapedPath()
-		path = strings.Replace(path, "/"+bucketName, "", 1)
-		path = strings.Replace(path, "/", "", 1)
-	
-		return path, nil
-
+	var bucketName = s.env.StorageBucketName
+	if bucketName == "" {
+		s.logger.Zap.Fatal("Please check your env file for StorageBucketName")
 	}
 
+	_, err := s.client.Bucket(bucketName).Attrs(ctx)
+	if err == storage.ErrBucketNotExist {
+		s.logger.Zap.Fatalf("provided bucket %v doesn't exists", bucketName)
+	}
+	if err != nil {
+		s.logger.Zap.Fatalf("cloud bucket error: %v", err.Error())
+	}
 
+	wc := s.client.Bucket(bucketName).Object(fileName).NewWriter(ctx)
+	wc.ContentType = "application/octet-stream"
 
+	if extension == "jpg" || extension == "jpeg" {
+		err = jpeg.Encode(wc, file, nil)
+	} else {
+		err = png.Encode(wc, file)
+	}
+
+	if err != nil {
+		return "", err
+	}
+
+	if err := wc.Close(); err != nil {
+		return "", err
+	}
+
+	u, err := url.ParseRequestURI("/" + bucketName + "/" + wc.Attrs().Name)
+	if err != nil {
+		return "", err
+	}
+
+	path := u.EscapedPath()
+	path = strings.Replace(path, "/"+bucketName, "", 1)
+	path = strings.Replace(path, "/", "", 1)
+
+	return path, nil
+
+}

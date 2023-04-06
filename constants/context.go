@@ -17,7 +17,5 @@ const (
 	DUMMYEMAIL = "dummyrtw@mailinator.com"
 
 	//Adminrole ->
-	RoleAdmin= "admin"
-
-	
+	RoleAdmin = "admin"
 )

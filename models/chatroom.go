@@ -2,7 +2,7 @@ package models
 
 type ChatRoom struct {
 	Base
-	Name       string       `json:"name"`
+	Name string `json:"name"`
 	//ChatMember []ChatMember `json:"chatmember" gorm:"foreignKey:room_id"`
 }
 

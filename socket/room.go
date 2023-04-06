@@ -8,7 +8,7 @@ type Room struct {
 	Register   chan *Client
 	Unregister chan *Client
 	Broadcast  chan *Message
-	Isonline chan bool
+	Isonline   chan bool
 }
 
 // NewRoom creates a new Room
@@ -19,8 +19,6 @@ func NewRoom(id int64) *Room {
 		Register:   make(chan *Client),
 		Unregister: make(chan *Client),
 		Broadcast:  make(chan *Message),
-		
-
 	}
 }
 
@@ -45,7 +43,7 @@ func (room *Room) GetId() int64 {
 
 // register and notify others users
 func (room *Room) registerClientInRoom(client *Client) {
-	
+
 	room.Clients[client] = true
 }
 

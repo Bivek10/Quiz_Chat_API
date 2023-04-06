@@ -38,7 +38,7 @@ func (c UserService) GetAllUsers(pagination utils.Pagination) ([]models.User, in
 	return c.repository.GetAllUsers(pagination)
 }
 
-//user login
+// user login
 func (c UserService) UserLogin(email string, password string) (models.User, error) {
 	return c.repository.LoginUser(email, password)
 }

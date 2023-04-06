@@ -30,7 +30,7 @@ func NewHistoryController(gmailService services.GmailService, logger infrastruct
 		env:                 evn,
 		firbaseServices:     friebaseService,
 		quizHistoryServices: quizHistoryService,
-		gmailServices:gmailService ,
+		gmailServices:       gmailService,
 	}
 
 }

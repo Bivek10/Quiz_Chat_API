@@ -227,7 +227,7 @@ func (client *Client) joinUserInAllRoom(userID int64) {
 		}
 		client.rooms[chatRoom.ID] = chatRoom
 		chatRoom.Register <- client
-		
+
 	}
 	fmt.Println("chat room length", len(client.rooms))
 }

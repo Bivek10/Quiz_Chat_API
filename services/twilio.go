@@ -5,11 +5,11 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"github.com/bivek/fmt_backend/infrastructure"
+	"github.com/bivek/fmt_backend/models"
 	"io/ioutil"
 	"mime/multipart"
 	"net/http"
-	"github.com/bivek/fmt_backend/infrastructure"
-	"github.com/bivek/fmt_backend/models"
 )
 
 // ErrorResponse twilio error response

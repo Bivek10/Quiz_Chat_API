@@ -18,7 +18,6 @@ type WsServer struct {
 	MessageService   services.ChatMessageService
 }
 
-
 func NewWebsocketServer(chatRoomServices services.ChatRoomService, chatmemeberService services.ChatMemberService, logger infrastructure.Logger, messageService services.ChatMessageService) *WsServer {
 	chatServer := &WsServer{
 		Broadcast:        make(chan []byte),
@@ -46,10 +45,11 @@ func (server *WsServer) Run() {
 		}
 	}
 }
+
 // register client to the server
 func (server *WsServer) registerClient(client *Client) {
 	server.Client[client] = true
-	
+
 }
 
 // Delete the clent from the server after it's is lost its connection
@@ -101,7 +101,7 @@ func (server *WsServer) findRoomByID(ID int64) *models.ChatRoom {
 }
 
 func (server *WsServer) saveMessage(messageModel models.ChatMessage) *models.ChatMessage {
-	
+
 	dbMessage, err := server.MessageService.CreateChatMessage(messageModel)
 	if err != nil {
 		server.Logger.Zap.Error("Failed to save data in database")

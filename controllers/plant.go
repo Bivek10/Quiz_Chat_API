@@ -68,8 +68,8 @@ func (cc PlantController) GetAllPlant(c *gin.Context) {
 
 // get plant by ID
 
-func (cc PlantController) GetPlantByID(c *gin.Context,) {
-	plantID:=c.Param("id")
+func (cc PlantController) GetPlantByID(c *gin.Context) {
+	plantID := c.Param("id")
 	plants, err := cc.plantService.GetPlantByID(plantID)
 	if err != nil {
 		cc.logger.Zap.Error("Error finding plant records", err.Error())

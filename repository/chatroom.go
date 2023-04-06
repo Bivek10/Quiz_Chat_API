@@ -64,7 +64,7 @@ func (c ChatRoomRepository) GetAllChatRoom(pagination utils.CursorPagination) ([
 }
 
 // GetAllChatRoom -> Get All ChatRoom
-func (c ChatRoomRepository) GetAllRoomByUserID( userID int64) ([]models.RoomMember, int64, error) {
+func (c ChatRoomRepository) GetAllRoomByUserID(userID int64) ([]models.RoomMember, int64, error) {
 	var chatRoomMember []models.ChatRoomMember
 
 	var chatMember []models.ChatMember

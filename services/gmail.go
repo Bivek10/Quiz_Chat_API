@@ -39,7 +39,7 @@ func (g GmailService) SendEmail(params models.EmailParams) (bool, error) {
 	var msg []byte
 
 	fmt.Println("gmail serviec lien 41")
-	
+
 	if params.Lang != nil && *params.Lang != "en" {
 		msgStringJP, _ := utils.ToISO2022JP(msgString)
 		msg = []byte(msgStringJP)

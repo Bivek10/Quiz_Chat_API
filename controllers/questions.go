@@ -32,7 +32,7 @@ func NewQuestionController(logger infrastructure.Logger, questionService service
 
 }
 
-//create ->quiz
+// create ->quiz
 func (qq QuestionsController) CreateQuestion(c *gin.Context) {
 	quesitons := models.Questions{}
 	trx := c.MustGet(constants.DBTransaction).(*gorm.DB)
@@ -70,7 +70,7 @@ func (qq QuestionsController) GetQuestionByID(c *gin.Context) {
 	id := c.Param("quiz_id")
 	pagination := utils.BuildPagination(c)
 	quiz_id, errs := strconv.Atoi(id)
-	if errs !=nil{
+	if errs != nil {
 		qq.logger.Zap.Error("Error converting the string into int", errs.Error())
 		err := errors.InternalError.Wrap(errs, "Failed failed to convert error to int")
 		responses.HandleError(c, err)

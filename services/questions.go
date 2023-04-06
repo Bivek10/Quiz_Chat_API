@@ -7,11 +7,11 @@ import (
 	"gorm.io/gorm"
 )
 
-type QuestionServices struct{
+type QuestionServices struct {
 	repository repository.QuestionRepository
 }
 
-func NewQuestionServices(repo repository.QuestionRepository)QuestionServices {
+func NewQuestionServices(repo repository.QuestionRepository) QuestionServices {
 	return QuestionServices{
 		repository: repo,
 	}
@@ -26,13 +26,10 @@ func (c QuestionServices) CreateQuestion(questions models.Questions) error {
 	return err
 }
 
-
-func (c QuestionServices) GetAllQuestion(pagination utils.Pagination) ([]models.Questions, int64, error){
+func (c QuestionServices) GetAllQuestion(pagination utils.Pagination) ([]models.Questions, int64, error) {
 	return c.repository.GetAllQuestion(pagination)
 }
 
-func(c QuestionServices) GetByQuestionByQuizID(pagination utils.Pagination, quiz_id int64)([]models.Questions, int64, error){
+func (c QuestionServices) GetByQuestionByQuizID(pagination utils.Pagination, quiz_id int64) ([]models.Questions, int64, error) {
 	return c.repository.GetQuestionsByQuiz(pagination, quiz_id)
 }
-
-

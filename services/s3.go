@@ -1,8 +1,8 @@
 package services
 
 import (
-	"github.com/bivek/fmt_backend/infrastructure"
 	"context"
+	"github.com/bivek/fmt_backend/infrastructure"
 	"mime/multipart"
 
 	"github.com/aws/aws-sdk-go-v2/aws"

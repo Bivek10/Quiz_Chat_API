@@ -43,7 +43,7 @@ func NewRoutes(
 	chatMessageRoutes ChatMessageRoutes,
 	chatMemberRoutes ChatMemberRoutes,
 	friendrequestRoutes FriendRequestRoutes,
-	threadRoutes 	ThreadRoutes,
+	threadRoutes ThreadRoutes,
 
 ) Routes {
 	return Routes{

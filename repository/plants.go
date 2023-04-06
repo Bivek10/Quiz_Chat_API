@@ -15,7 +15,7 @@ type PlantRepository struct {
 
 func NewPlantRepository(db infrastructure.Database, logger infrastructure.Logger) PlantRepository {
 	return PlantRepository{
-	
+
 		db:     db,
 		logger: logger,
 	}

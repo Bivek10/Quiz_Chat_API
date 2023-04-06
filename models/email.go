@@ -6,10 +6,9 @@ type EmailParams struct {
 	SubjectTemplate string
 	BodyData        interface{}
 	BodyTemplate    string
-	Lang            *string 
+	Lang            *string
 }
 
 type EmailSubject struct {
 	Data string
 }
-

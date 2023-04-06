@@ -30,8 +30,6 @@ func NewChatMemberController(
 	}
 }
 
-
-
 // CreateChatMember -> Create ChatMember
 func (cc ChatMemberController) CreateChatMember(c *gin.Context) {
 	ChatMember := models.ChatMember{}

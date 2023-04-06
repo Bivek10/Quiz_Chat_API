@@ -56,7 +56,7 @@ func FileUpload(ctx context.Context, fileHeader *multipart.FileHeader, folderNam
 }
 
 func DeleteFileUpload(filepath string) {
-	fmt.Println("filepath",filepath)
+	fmt.Println("filepath", filepath)
 	err := os.Remove(filepath)
 	if err != nil {
 		fmt.Println("Error on Deleting file", err)

@@ -1,9 +1,9 @@
 package middlewares
 
 import (
+	"github.com/bivek/fmt_backend/constants"
 	"github.com/bivek/fmt_backend/responses"
 	"github.com/bivek/fmt_backend/services"
-	"github.com/bivek/fmt_backend/constants"
 	"net/http"
 	"strings"
 
@@ -92,7 +92,6 @@ func (m FirebaseAuthMiddleware) getTokenFromHeader(c *gin.Context) (*auth.Token,
 	return token, nil
 }
 
-
 // isAdmin check if cliams is admin
 func (M FirebaseAuthMiddleware) isAdmin(claims map[string]interface{}) bool {
 	role := claims["role"]
@@ -104,5 +103,3 @@ func (M FirebaseAuthMiddleware) isAdmin(claims map[string]interface{}) bool {
 	return isAdmin
 
 }
-
-

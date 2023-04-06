@@ -8,10 +8,10 @@ import (
 
 // ChatMemberRoutes -> struct
 type ChatMemberRoutes struct {
-	logger             infrastructure.Logger
-	router             infrastructure.Router
+	logger               infrastructure.Logger
+	router               infrastructure.Router
 	chatMemberController controllers.ChatMemberController
-	middleware         middlewares.FirebaseAuthMiddleware
+	middleware           middlewares.FirebaseAuthMiddleware
 }
 
 // NewChatMemberRoutes -> creates new chatMember controller
@@ -22,10 +22,10 @@ func NewChatMemberRoutes(
 	middleware middlewares.FirebaseAuthMiddleware,
 ) ChatMemberRoutes {
 	return ChatMemberRoutes{
-		router:             router,
-		logger:             logger,
+		router:               router,
+		logger:               logger,
 		chatMemberController: chatMemberController,
-		middleware:         middleware,
+		middleware:           middleware,
 	}
 }
 

@@ -25,11 +25,11 @@ func ToISO2022JP(str string) ([]byte, error) {
 // ParseTemplate -> to parse the template with given data
 func ParseTemplate(templateFileName string, data interface{}) (string, error) {
 	templatePath, err := filepath.Abs(fmt.Sprintf("templates/%s", templateFileName))
-	
+
 	if err != nil {
 		return "", errors.New("invalid template name")
 	}
-	
+
 	t, err := template.ParseFiles(templatePath)
 	if err != nil {
 		fmt.Println("template path of parsed Error: ", err)

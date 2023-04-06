@@ -19,8 +19,6 @@ func (f FriendRequest) TableName() string {
 	return "friendrequest"
 }
 
-func (f FriendRequest) ToMap() map[string]interface{}{
-	return map[string]interface{}{
-		
-	}
+func (f FriendRequest) ToMap() map[string]interface{} {
+	return map[string]interface{}{}
 }

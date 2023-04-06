@@ -50,9 +50,9 @@ type SignedDetails struct {
 
 type ClientResponse struct {
 	Base
-	FirstName string `form:"first_name" json:"first_name"`
-	LastName  string `form:"last_name" json:"last_name"`
-	Email     string `form:"email" json:"email" gorm:"unique"`
-	Address   string `form:"address" json:"address"`
+	FirstName    string `form:"first_name" json:"first_name"`
+	LastName     string `form:"last_name" json:"last_name"`
+	Email        string `form:"email" json:"email" gorm:"unique"`
+	Address      string `form:"address" json:"address"`
 	ProfilePhoto string `form:"profile_photo" json:"profile_photo" bson:",omitempty" `
 }

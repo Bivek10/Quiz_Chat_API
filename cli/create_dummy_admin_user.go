@@ -1,8 +1,8 @@
 package cli
 
 import (
-	"github.com/bivek/fmt_backend/services"
 	"github.com/bivek/fmt_backend/infrastructure"
+	"github.com/bivek/fmt_backend/services"
 
 	"github.com/manifoldco/promptui"
 )

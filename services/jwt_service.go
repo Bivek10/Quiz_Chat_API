@@ -64,7 +64,7 @@ func (m JWTService) VerifyToken(c *gin.Context) (bool, error) {
 
 	tokenString := strings.TrimSpace(strings.Replace(header, "Bearer", "", 1))
 	token, err := m.ParseToken(tokenString)
-	
+
 	if err != nil {
 		m.logger.Zap.Error("Error parsing token", err.Error())
 		return false, err

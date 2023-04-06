@@ -29,7 +29,7 @@ func (c ChatMessageRepository) Create(ChatMessage models.ChatMessage) (models.Ch
 // GetAllChatMessage -> Get All ChatMessage
 func (c ChatMessageRepository) GetAllChatMessage(pagination utils.CursorPagination, roomID int) ([]models.ChatMessage, int64, error) {
 	var ChatMessage []models.ChatMessage
-	
+
 	queryBuider := c.db.DB.Model(&models.ChatMessage{}).
 		Limit(2).
 		Where("room_id = ?", roomID).

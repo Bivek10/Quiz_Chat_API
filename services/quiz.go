@@ -34,4 +34,3 @@ func (c QuizService) CreateQuiz(quiz models.Quizs) error {
 func (c QuizService) GetAllQuiz(pagination utils.Pagination) ([]models.Quizs, int64, error) {
 	return c.repository.GetAllQuiz(pagination)
 }
-

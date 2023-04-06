@@ -47,7 +47,7 @@ func bootstrap(
 	appStop := func(context.Context) error {
 		logger.Zap.Info("Stopping Application")
 		conn, _ := database.DB.DB()
-	
+
 		conn.Close()
 		return nil
 	}
